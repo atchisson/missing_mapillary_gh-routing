@@ -1,6 +1,7 @@
 // Constants used throughout the application
 
-export const GRAPHHOPPER_URL = 'https://ghroute.duckdns.org';
+export const GRAPHHOPPER_URL = 'https://ghroute.vizsim.de';
+//export const GRAPHHOPPER_URL = 'https://ghroute.duckdns.org';
 // const GRAPHHOPPER_URL = 'http://localhost:8989'; // For local development
 
 // Error messages

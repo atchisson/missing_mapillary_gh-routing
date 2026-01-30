@@ -241,15 +241,13 @@ export function setupBaseLayerControls(map, isInitializingRef) {
             await restoreRoute(map);
           });
         } else {
-          // Already using light-dark style, just switch theme
-          // But first, make sure raster layers are hidden
+          // Already using light-dark style, just switch theme (map only – UI stays unchanged)
           if (map.getLayer("satellite-layer")) {
             map.setLayoutProperty("satellite-layer", "visibility", "none");
           }
           if (map.getLayer("osm-layer")) {
             map.setLayoutProperty("osm-layer", "visibility", "none");
           }
-          // Then switch theme
           switchMapTheme(map, isDark);
         }
       } else {

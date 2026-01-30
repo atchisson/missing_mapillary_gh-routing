@@ -169,13 +169,18 @@ const LAYER_MAPPING = {
  * Switch map theme between Light and Dark
  * @param {maplibregl.Map} map - Map instance
  * @param {boolean} isDark - Whether to switch to dark theme
+ * @param {number} retryCount - Internal: retry count when map not ready (used when called from panel)
  */
-export function switchMapTheme(map, isDark) {
+export function switchMapTheme(map, isDark, retryCount = 0) {
   if (!map) {
     return;
   }
-  
+
+  const maxRetries = 20;
   if (!map.isStyleLoaded() || !map.loaded()) {
+    if (retryCount < maxRetries) {
+      setTimeout(() => switchMapTheme(map, isDark, retryCount + 1), 80);
+    }
     return;
   }
 

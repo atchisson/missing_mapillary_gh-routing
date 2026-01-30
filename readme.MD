@@ -26,7 +26,7 @@
 - **Photon Geocoder**: Adresssuche und Geocoding
 
 ### Datenquellen
-- **GraphHopper API**: Routenberechnung (Server-Instanz: [ghroute.duckdns.org](https://ghroute.duckdns.org))
+- **GraphHopper API**: Routenberechnung (Server-Instanz: [ghroute.vizsim.de](https://ghroute.vizsim.de))
 - **OpenStreetMap**: Basiskartendaten
 - **OSM Verkehrswende**: Mapillary Missing Streets Daten - [osm-verkehrswende.org](https://www.osm-verkehrswende.org)
 - **FixMyCity** / **tilda-geo.de**: Vektortiles für Radinfrastruktur - [tilda-geo.de](https://tilda-geo.de)
@@ -101,7 +101,7 @@ missing_mapillary_gh-routing/
 
 Die Anwendung kann direkt im Browser geöffnet werden: [https://vizsim.github.io/missing_mapillary_gh-routing/](https://vizsim.github.io/missing_mapillary_gh-routing/)
 
-Die Anwendung nutzt eine eigene GraphHopper-Instanz, die auf [ghroute.duckdns.org](https://ghroute.duckdns.org) erreichbar ist.
+Die Anwendung nutzt eine eigene GraphHopper-Instanz, die auf [ghroute.vizsim.de](https://ghroute.vizsim.de) erreichbar ist.
 
 ---
 
