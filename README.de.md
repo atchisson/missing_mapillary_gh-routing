@@ -2,6 +2,8 @@
 
 **Proof of Concept** - Eine interaktive Web-Anwendung für Routenplanung mit GraphHopper-Integration, speziell optimiert für die Identifikation und Planung von Routen entlang von Straßen ohne Mapillary-Abdeckung. Die Anwendung visualisiert Mapillary Coverage-Daten und hilft dabei, Lücken in der Street View-Abdeckung zu identifizieren.
 
+> Auch verfügbar auf: [English](README.md)
+
 ---
 
 ## Features
