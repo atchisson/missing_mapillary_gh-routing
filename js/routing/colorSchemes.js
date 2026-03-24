@@ -1,6 +1,8 @@
 // Centralized color schemes for route visualization
 // Single source of truth for all color mappings
 
+import { t } from '../i18n/i18n.js';
+
 // Helper function to convert hex to rgba
 function hexToRgba(hex, opacity = 1.0) {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -109,33 +111,33 @@ export const BICYCLE_INFRA_COLORS = {
 
 // Bicycle infrastructure descriptions mapping
 export const BICYCLE_INFRA_DESCRIPTIONS = {
-  'none': 'Keine spezielle Fahrradinfrastruktur',
-  'bicycleroad': 'Fahrradstraße',
-  'bicycleroad_vehicledestination': 'Fahrradstraße mit<br>Anlieger/Kfz frei',
-  'pedestrianareabicycleyes': 'Fußgängerzone,<br>Fahrrad frei',
-  'cycleway_adjoining': 'Radweg,<br>straßenbegleitend',
-  'cycleway_isolated': 'Radweg,<br>selbstständig geführt',
-  'cycleway_adjoiningorisolated': 'Radweg (Fallback)',
-  'cyclewaylink': 'Radweg-Routing-<br>Verbindungsstück',
-  'crossing': 'Straßenquerung',
-  'cyclewayonhighway_advisory': 'Schutzstreifen',
-  'cyclewayonhighway_exclusive': 'Radfahrstreifen',
-  'cyclewayonhighway_advisoryorexclusive': 'Radfahrstreifen/<br>Schutzstreifen (Fallback)',
-  'cyclewayonhighwaybetweenlanes': 'Radfahrstreifen in<br>Mittellage ("Angstweiche")',
-  'cyclewayonhighwayprotected': 'Protected Bike Lane (PBL)',
-  'sharedbuslanebikewithbus': 'Radfahrstreifen mit<br>Freigabe Busverkehr',
-  'sharedbuslanebuswithbike': 'Bussonderfahrstreifen<br>mit Fahrrad frei',
-  'sharedmotorvehiclelane': 'Gemeinsamer Fahrstreifen',
-  'footandcyclewaysegregated_adjoining': 'Getrennter Geh- und<br>Radweg, straßenbegleitend',
-  'footandcyclewaysegregated_isolated': 'Getrennter Geh- und<br>Radweg, selbstständig',
-  'footandcyclewaysegregated_adjoiningorisolated': 'Getrennter Geh- und<br>Radweg (Fallback)',
-  'footandcyclewayshared_adjoining': 'Gemeinsamer Geh- und<br>Radweg, straßenbegleitend',
-  'footandcyclewayshared_isolated': 'Gemeinsamer Geh- und<br>Radweg, selbstständig',
-  'footandcyclewayshared_adjoiningorisolated': 'Gemeinsamer Geh- und<br>Radweg (Fallback)',
-  'footwaybicycleyes_adjoining': 'Gehweg, Fahrrad frei,<br>straßenbegleitend',
-  'footwaybicycleyes_isolated': 'Gehweg, Fahrrad frei,<br>selbstständig',
-  'footwaybicycleyes_adjoiningorisolated': 'Gehweg, Fahrrad frei<br>(Fallback)',
-  'needsclarification': 'Führungsform unklar -<br>Tags nicht ausreichend'
+  'none': 'bicycleInfra.none',
+  'bicycleroad': 'bicycleInfra.bicycleroad',
+  'bicycleroad_vehicledestination': 'bicycleInfra.bicycleroad_vehicledestination',
+  'pedestrianareabicycleyes': 'bicycleInfra.pedestrianareabicycleyes',
+  'cycleway_adjoining': 'bicycleInfra.cycleway_adjoining',
+  'cycleway_isolated': 'bicycleInfra.cycleway_isolated',
+  'cycleway_adjoiningorisolated': 'bicycleInfra.cycleway_adjoiningorisolated',
+  'cyclewaylink': 'bicycleInfra.cyclewaylink',
+  'crossing': 'bicycleInfra.crossing',
+  'cyclewayonhighway_advisory': 'bicycleInfra.cyclewayonhighway_advisory',
+  'cyclewayonhighway_exclusive': 'bicycleInfra.cyclewayonhighway_exclusive',
+  'cyclewayonhighway_advisoryorexclusive': 'bicycleInfra.cyclewayonhighway_advisoryorexclusive',
+  'cyclewayonhighwaybetweenlanes': 'bicycleInfra.cyclewayonhighwaybetweenlanes',
+  'cyclewayonhighwayprotected': 'bicycleInfra.cyclewayonhighwayprotected',
+  'sharedbuslanebikewithbus': 'bicycleInfra.sharedbuslanebikewithbus',
+  'sharedbuslanebuswithbike': 'bicycleInfra.sharedbuslanebuswithbike',
+  'sharedmotorvehiclelane': 'bicycleInfra.sharedmotorvehiclelane',
+  'footandcyclewaysegregated_adjoining': 'bicycleInfra.footandcyclewaysegregated_adjoining',
+  'footandcyclewaysegregated_isolated': 'bicycleInfra.footandcyclewaysegregated_isolated',
+  'footandcyclewaysegregated_adjoiningorisolated': 'bicycleInfra.footandcyclewaysegregated_adjoiningorisolated',
+  'footandcyclewayshared_adjoining': 'bicycleInfra.footandcyclewayshared_adjoining',
+  'footandcyclewayshared_isolated': 'bicycleInfra.footandcyclewayshared_isolated',
+  'footandcyclewayshared_adjoiningorisolated': 'bicycleInfra.footandcyclewayshared_adjoiningorisolated',
+  'footwaybicycleyes_adjoining': 'bicycleInfra.footwaybicycleyes_adjoining',
+  'footwaybicycleyes_isolated': 'bicycleInfra.footwaybicycleyes_isolated',
+  'footwaybicycleyes_adjoiningorisolated': 'bicycleInfra.footwaybicycleyes_adjoiningorisolated',
+  'needsclarification': 'bicycleInfra.needsclarification'
 };
 
 /**
@@ -146,7 +148,19 @@ export const BICYCLE_INFRA_DESCRIPTIONS = {
 export function getBicycleInfraDescription(value) {
   if (!value) return null;
   const normalizedValue = String(value).toLowerCase();
-  return BICYCLE_INFRA_DESCRIPTIONS[normalizedValue] || null;
+  const key = `bicycleInfra.${normalizedValue}`;
+  const translated = t(key);
+  if (translated !== key) return translated;
+
+  // Fallback to mapped i18n key (for non-standard/legacy values)
+  const fallbackKey = BICYCLE_INFRA_DESCRIPTIONS[normalizedValue];
+  if (!fallbackKey) return null;
+
+  const fallbackTranslated = t(fallbackKey);
+  if (fallbackTranslated !== fallbackKey) return fallbackTranslated;
+
+  // Last fallback: humanized raw value
+  return normalizedValue.replace(/_/g, ' ');
 }
 
 // Default colors

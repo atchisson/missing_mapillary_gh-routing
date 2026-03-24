@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en" data-i18n-lang="en">
 
 <head>
   <meta charset="utf-8" />
@@ -19,7 +19,7 @@
   <div class="routing-panel">
     <div class="routing-header">
       <div class="profile-selector">
-        <button class="profile-btn active" data-profile="bike_customizable" title="Fahrrad (Anpassbar)">
+        <button class="profile-btn active" data-profile="bike_customizable" data-i18n-title="routing.profiles.bike" title="Bicycle (Customizable)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="5.5" cy="17.5" r="3.5"/>
             <circle cx="18.5" cy="17.5" r="3.5"/>
@@ -27,7 +27,7 @@
             <path d="M12 17.5V14l-3-3 4-3 2 3h3"/>
           </svg>
         </button>
-        <button class="profile-btn" data-profile="car_customizable" title="Auto (Anpassbar)">
+        <button class="profile-btn" data-profile="car_customizable" data-i18n-title="routing.profiles.car" title="Car (Customizable)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <!-- Car -->
             <path d="M19.78 9.44L17.94 4.44C17.8238 4.09604 17.6036 3.79671 17.3097 3.5835C17.0159 3.37029 16.663 3.25374 16.3 3.25H7.7C7.3418 3.2508 6.99248 3.36151 6.6992 3.56716C6.40592 3.77281 6.18281 4.06351 6.06 4.4L4.22 9.4C3.92473 9.54131 3.67473 9.76216 3.49808 10.0377C3.32142 10.3133 3.22512 10.6327 3.22 10.96V15.46C3.21426 15.7525 3.28279 16.0417 3.41921 16.3006C3.55562 16.5594 3.75544 16.7794 4 16.94V17V19C4 19.2652 4.10536 19.5196 4.29289 19.7071C4.48043 19.8946 4.73478 20 5 20H6C6.26522 20 6.51957 19.8946 6.70711 19.7071C6.89464 19.5196 7 19.2652 7 19V17.25H17V19C17 19.2652 17.1054 19.5196 17.2929 19.7071C17.4804 19.8946 17.7348 20 18 20H19C19.2652 20 19.5196 19.8946 19.7071 19.7071C19.8946 19.5196 20 19.2652 20 19V17C20 17 20 17 20 16.94C20.2351 16.7808 20.4275 16.5661 20.56 16.315C20.6925 16.0639 20.7612 15.784 20.76 15.5V11C20.7567 10.6748 20.6634 10.3569 20.4904 10.0815C20.3174 9.80616 20.0715 9.58411 19.78 9.44ZM19.25 15.5C19.25 15.5663 19.2237 15.6299 19.1768 15.6768C19.1299 15.7237 19.0663 15.75 19 15.75H5C4.93369 15.75 4.87011 15.7237 4.82322 15.6768C4.77634 15.6299 4.75 15.5663 4.75 15.5V11C4.75 10.9337 4.77634 10.8701 4.82322 10.8232C4.87011 10.7763 4.93369 10.75 5 10.75H19C19.0663 10.75 19.1299 10.7763 19.1768 10.8232C19.2237 10.8701 19.25 10.9337 19.25 11V15.5ZM7.47 4.91C7.48797 4.86341 7.51949 4.82327 7.56048 4.79475C7.60147 4.76624 7.65007 4.75065 7.7 4.75H16.3C16.3499 4.75065 16.3985 4.76624 16.4395 4.79475C16.4805 4.82327 16.512 4.86341 16.53 4.91L17.93 8.75H6.07L7.47 4.91Z"/>
@@ -38,7 +38,7 @@
       </div>
       <!-- Quick action buttons (visible when collapsed) -->
       <div class="header-quick-actions">
-        <button id="set-start-header" class="btn-set-point-header btn-set-start" title="Startpunkt auf Karte setzen">
+        <button id="set-start-header" class="btn-set-point-header btn-set-start" data-i18n-title="routing.setStart" title="Set start point on map">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="#10b981" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
             <g transform="translate(12, 10) scale(0.6) translate(-12, -12)">
@@ -46,7 +46,7 @@
             </g>
           </svg>
         </button>
-        <button id="set-end-header" class="btn-set-point-header btn-set-end" title="Zielpunkt auf Karte setzen">
+        <button id="set-end-header" class="btn-set-point-header btn-set-end" data-i18n-title="routing.setEnd" title="Set end point on map">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
             <g transform="translate(12, 10) scale(0.4) translate(-16, -16)">
@@ -59,14 +59,14 @@
             </g>
           </svg>
         </button>
-        <button id="add-waypoint-header" class="btn-add-waypoint-header" title="Zwischenpunkt hinzufügen">
+        <button id="add-waypoint-header" class="btn-add-waypoint-header" data-i18n-title="routing.addWaypoint" title="Add waypoint">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
         </button>
       </div>
-      <button class="btn-close" id="collapse-routing-panel" title="Ein-/Ausklappen">
+      <button class="btn-close" id="collapse-routing-panel" data-i18n-title="routing.collapse" title="Expand/Collapse">
         <svg width="16" height="16" viewBox="-20 -20 490 450" fill="currentColor">
           <g transform="translate(32, 42.666667) rotate(180 225 200)">
             <path d="M246.312928,5.62892705 C252.927596,9.40873724 258.409564,14.8907053 262.189374,21.5053731 L444.667042,340.84129 C456.358134,361.300701 449.250007,387.363834 428.790595,399.054926 C422.34376,402.738832 415.04715,404.676552 407.622001,404.676552 L42.6666667,404.676552 C19.1025173,404.676552 7.10542736e-15,385.574034 7.10542736e-15,362.009885 C7.10542736e-15,354.584736 1.93772021,347.288125 5.62162594,340.84129 L188.099293,21.5053731 C199.790385,1.04596203 225.853517,-6.06216498 246.312928,5.62892705 Z"/>
@@ -84,8 +84,8 @@
             </svg>
           </div>
           <div class="input-with-button">
-            <input type="text" id="start-input" placeholder="Adresse oder Koordinaten" />
-            <button id="set-start" class="btn-set-point btn-set-start" title="Startpunkt auf Karte setzen">
+            <input type="text" id="start-input" data-i18n-placeholder="routing.placeholder" placeholder="Address or coordinates" />
+            <button id="set-start" class="btn-set-point btn-set-start" data-i18n-title="routing.setStart" title="Set start point on map">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="#10b981" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <g transform="translate(12, 10) scale(0.6) translate(-12, -12)">
@@ -119,8 +119,8 @@
             </svg>
           </div>
           <div class="input-with-button">
-            <input type="text" id="end-input" placeholder="Adresse oder Koordinaten" />
-            <button id="set-end" class="btn-set-point btn-set-end" title="Zielpunkt auf Karte setzen">
+            <input type="text" id="end-input" data-i18n-placeholder="routing.placeholder" placeholder="Address or coordinates" />
+            <button id="set-end" class="btn-set-point btn-set-end" data-i18n-title="routing.setEnd" title="Set end point on map">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <g transform="translate(12, 10) scale(0.4) translate(-16, -16)">
@@ -149,13 +149,13 @@
           </div>
           <div class="input-with-button">
             <div class="waypoints-header-field">
-              <span>Zwischenpunkte</span>
-              <label class="waypoint-optimization-toggle" title="Automatische Optimierung der Reihenfolge aktivieren">
+              <span data-i18n="routing.waypoints">Waypoints</span>
+              <label class="waypoint-optimization-toggle" data-i18n-title="routing.autoSortTitle" title="Enable automatic waypoint order optimization">
                 <input type="checkbox" id="waypoint-optimization-toggle" checked>
-                <span class="toggle-label">Auto-Sortierung</span>
+                <span class="toggle-label" data-i18n="routing.autoSort">Auto-sort</span>
               </label>
             </div>
-            <button id="add-waypoint" class="btn-add-waypoint" title="Zwischenpunkt hinzufügen">
+            <button id="add-waypoint" class="btn-add-waypoint" data-i18n-title="routing.addWaypoint" title="Add waypoint">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -171,21 +171,21 @@
       </div>
       
       <div class="routing-buttons">
-        <button id="calculate-route" class="btn-primary">Route berechnen</button>
-        <button id="hide-route" class="btn-icon" title="Ausblenden/Einblenden">
+        <button id="calculate-route" class="btn-primary" data-i18n="routing.calculate">Calculate route</button>
+        <button id="hide-route" class="btn-icon" data-i18n-title="routing.toggleVisibility" title="Hide/Show">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
         </button>
-        <button id="export-gpx" class="btn-icon" title="GPX exportieren" style="display: none;">
+        <button id="export-gpx" class="btn-icon" data-i18n-title="routing.exportGpx" title="Export GPX" style="display: none;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
         </button>
-        <button id="clear-route" class="btn-icon" title="Löschen">
+        <button id="clear-route" class="btn-icon" data-i18n-title="routing.clear" title="Clear">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"></polyline>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -198,7 +198,7 @@
       <div id="customizable-slider-container" class="customizable-slider-container" style="display: none;">
         <div class="slider-section">
           <div class="slider-header">
-            <label for="mapillary-priority-slider" class="slider-label">Mapillary Weight:</label>
+            <label for="mapillary-priority-slider" class="slider-label" data-i18n="routing.mapillaryWeight">Mapillary Weight:</label>
             <span id="slider-value" class="slider-value">1.0</span>
           </div>
           <input type="range" id="mapillary-priority-slider" class="slider" min="0" max="10" step="1" value="10">
@@ -245,7 +245,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="car-access-icon">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M6 1C6.55228 1 7 1.44772 7 2V4H17V2C17 1.44772 17.4477 1 18 1C18.5523 1 19 1.44772 19 2V4H20C21.6569 4 23 5.34315 23 7V11C23 12.6569 21.6569 14 20 14H19V22C19 22.5523 18.5523 23 18 23C17.4477 23 17 22.5523 17 22V14H7L7 22C7 22.5523 6.55228 23 6 23C5.44772 23 5 22.5523 5 22L5 14H4C2.34315 14 1 12.6569 1 11V7C1 5.34315 2.34315 4 4 4H5V2C5 1.44772 5.44772 1 6 1ZM3 7C3 6.44772 3.44772 6 4 6H6.38197L3.4608 11.8423C3.18365 11.6645 3 11.3537 3 11V7ZM5.61803 12H7.38197L10.382 6H8.61803L5.61803 12ZM12.618 6L9.61803 12H11.382L14.382 6H12.618ZM16.618 6L13.618 12H15.382L18.382 6H16.618ZM20.5392 6.15767L17.618 12H20C20.5523 12 21 11.5523 21 11V7C21 6.64628 20.8163 6.33545 20.5392 6.15767Z" fill="currentColor"/>
             </svg>
-            <span class="car-access-text">Durchfahrtsbeschränkungen ignorieren</span>
+            <span class="car-access-text" data-i18n="routing.carAccess">Ignore access restrictions</span>
           </div>
         </div>
         <div id="unpaved-roads-container" class="unpaved-roads-container" style="display: none;">
@@ -279,7 +279,7 @@
               <path d="M39.0001 10.1319C39.0001 10.6113 38.6114 10.9999 38.132 10.9999C37.6526 10.9999 37.2639 10.6113 37.2639 10.1319C37.2639 9.65244 37.6526 9.26379 38.132 9.26379C38.6114 9.26379 39.0001 9.65244 39.0001 10.1319Z" fill="currentColor"/>
               <path fill-rule="evenodd" clip-rule="evenodd" d="M20.7262 12.9584C19.246 14.0427 17.8476 15.2409 16.5442 16.5443C13.2013 19.8872 10.5495 23.8558 8.74037 28.2235C7.18664 31.9746 6.28048 35.9569 6.05557 40.0012C5.99423 41.104 6.89546 42.0002 8.00003 42.0002H22C23.1046 42.0002 23.9885 41.102 24.111 40.0043C24.2983 38.3257 24.7213 36.6784 25.3702 35.1119C26.2748 32.928 27.6007 30.9437 29.2721 29.2722C30.2824 28.2619 31.4071 27.3779 32.621 26.6368C28.8049 22.1902 24.0011 16.6349 20.7262 12.9584ZM25.0957 21.7401L24.3724 22.4306C23.8311 22.9473 23.3105 23.4882 22.8117 24.0515L22.1488 24.8001L20.6515 23.4741L21.3145 22.7255C21.8498 22.121 22.4091 21.5398 22.9913 20.984L23.7146 20.2935L25.0957 21.7401ZM20.6432 26.8087L20.1082 27.6536C19.3092 28.9155 18.6018 30.2488 17.9938 31.6398L17.5932 32.5561L15.7607 31.755L16.1612 30.8387C16.8093 29.356 17.5643 27.9327 18.4184 26.5836L18.9534 25.7388L20.6432 26.8087ZM16.7566 34.9367L16.4947 35.9018C16.298 36.6263 16.1266 37.3612 15.9815 38.1046L15.7898 39.0861L13.8269 38.7029L14.0185 37.7214C14.1729 36.9306 14.3552 36.1489 14.5645 35.3779L14.8265 34.4128L16.7566 34.9367Z" fill="currentColor"/>
             </svg>
-            <span class="unpaved-roads-text">Unbefestigte Wege meiden</span>
+            <span class="unpaved-roads-text" data-i18n="routing.unpavedRoads">Avoid unpaved roads</span>
           </div>
         </div>
         <div id="avoid-pushing-container" class="avoid-pushing-container" style="display: none;">
@@ -298,7 +298,7 @@
               <path d="M 88.25,109.6 V 200.99 C 97.02,200.99 104.13,193.86 104.13,185.09 V 129.46 L 143.86,193.04 C 151.31,188.38 153.57,178.58 148.93,171.14 L 120.03,124.9 V 109.6" fill="currentColor"/>
               <circle cx="94.2" cy="16.23" r="15.89" fill="currentColor"/>
             </svg>
-            <span class="avoid-pushing-text">Schieben verhindern</span>
+            <span class="avoid-pushing-text" data-i18n="routing.avoidPushing">Avoid pushing bike</span>
           </div>
         </div>
       </div>
@@ -306,12 +306,12 @@
       <div id="route-info" class="route-info"></div>
       <div id="heightgraph-container" class="heightgraph-container" style="display: none;">
         <div class="heightgraph-header">
-          <span>Höhenprofil</span>
+          <span data-i18n="heightgraph.title">Elevation Profile</span>
           <select id="heightgraph-encoded-select" class="heightgraph-select">
-            <option value="mapillary_coverage">Mapillary Coverage</option>
-            <option value="surface">Surface</option>
-            <option value="road_class">Road Class</option>
-            <option value="bicycle_infra">Bicycle Infrastructure</option>
+            <option value="mapillary_coverage" data-i18n="heightgraph.mapillaryCoverage">Mapillary Coverage</option>
+            <option value="surface" data-i18n="heightgraph.surface">Surface</option>
+            <option value="road_class" data-i18n="heightgraph.roadClass">Road Class</option>
+            <option value="bicycle_infra" data-i18n="heightgraph.bicycleInfra">Bicycle Infrastructure</option>
           </select>
         </div>
         <div style="position: relative;">
@@ -332,7 +332,7 @@
           </svg>
         </a>
         <a href="https://github.com/vizsim/missing_mapillary_gh-routing/issues" target="_blank" rel="noopener noreferrer" 
-           title="Fehler melden oder Feedback geben"
+           data-i18n-title="github.reportIssue" title="Report a bug or give feedback"
            class="github-link">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/>
@@ -348,9 +348,9 @@
   <div class="context-panel">
     <div class="context-header">
       <div class="context-title">
-        <span>Kontext-Layer</span>
+        <span data-i18n="contextPanel.title">Context Layers</span>
       </div>
-      <button class="btn-close" id="collapse-context-panel" title="Ein-/Ausklappen">
+      <button class="btn-close" id="collapse-context-panel" data-i18n-title="routing.collapse" title="Expand/Collapse">
         <svg width="16" height="16" viewBox="-20 -20 490 450" fill="currentColor">
           <g transform="translate(32, 42.666667) rotate(180 225 200)">
             <path d="M246.312928,5.62892705 C252.927596,9.40873724 258.409564,14.8907053 262.189374,21.5053731 L444.667042,340.84129 C456.358134,361.300701 449.250007,387.363834 428.790595,399.054926 C422.34376,402.738832 415.04715,404.676552 407.622001,404.676552 L42.6666667,404.676552 C19.1025173,404.676552 7.10542736e-15,385.574034 7.10542736e-15,362.009885 C7.10542736e-15,354.584736 1.93772021,347.288125 5.62162594,340.84129 L188.099293,21.5053731 C199.790385,1.04596203 225.853517,-6.06216498 246.312928,5.62892705 Z"/>
@@ -368,8 +368,8 @@
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
               <circle cx="12" cy="13" r="4"></circle>
             </svg>
-            <span>Straßensegmente mit...</span>
-            <span class="info-icon-small" title="Quelle: OSM Mapillary Missing Streets; tilda-geo.de">ⓘ</span>
+            <span data-i18n="contextPanel.missingStreets.title">Street segments with...</span>
+            <span class="info-icon-small" data-i18n-title="contextPanel.missingStreets.sourceInfo" title="Source: OSM Mapillary Missing Streets; tilda-geo.de">ⓘ</span>
           </div>
           <label class="switch-toggle">
             <input type="checkbox" id="toggle-missing-streets" />
@@ -381,19 +381,19 @@
           <div class="bikelanes-legend" id="missing-streets-legend">
             <div class="legend-item">
               <span class="legend-line solid" style="background: #174ed9;"></span>
-              <span class="legend-text">...ausreichend Panorama-Fotos</span>
+              <span class="legend-text" data-i18n="contextPanel.missingStreets.panorama">...enough panoramic photos</span>
             </div>
             <div class="legend-item">
               <span class="legend-line solid" style="background: #0098f0;"></span>
-              <span class="legend-text">...ausreichend regulären Fotos</span>
+              <span class="legend-text" data-i18n="contextPanel.missingStreets.regular">...enough regular photos</span>
             </div>
             <div class="legend-item">
               <span class="legend-line solid" style="background: #e91e63;"></span>
-              <span class="legend-text">...fehlenden Fotos</span>
+              <span class="legend-text" data-i18n="contextPanel.missingStreets.missing">...missing photos</span>
             </div>
             
             <div class="context-footer">
-              <span>Mehr auf 
+              <span data-i18n="contextPanel.missingStreets.moreOn">More on</span>
                 <a id="osm-verkehrswende-link" href="https://www.osm-verkehrswende.org/mapillary/map/" target="_blank" rel="noopener">osm-verkehrswende.org</a>
               </span>
             </div>
@@ -411,8 +411,8 @@
               <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
               <path d="M12 17.5V14l-3-3 4-3 2 3h3"/>
             </svg>
-            <span>Radinfrastruktur</span>
-            <span class="info-icon-small" title="Quelle: © OpenStreetMap; tilda-geo.de">ⓘ</span>
+            <span data-i18n="contextPanel.bikeLanes.title">Cycling infrastructure</span>
+            <span class="info-icon-small" data-i18n-title="contextPanel.bikeLanes.sourceInfo" title="Source: © OpenStreetMap; tilda-geo.de">ⓘ</span>
           </div>
           <label class="switch-toggle">
             <input type="checkbox" id="toggle-bikelanes" />
@@ -424,31 +424,31 @@
           <div class="bikelanes-legend" id="bikelanes-legend">
             <div class="legend-item">
               <span class="legend-line solid" style="background: #174ed9;"></span>
-              <span class="legend-text">Führung baul. abgesetzt von Kfz</span>
+              <span class="legend-text" data-i18n="contextPanel.bikeLanes.separated">Separated from motor traffic</span>
             </div>
             <div class="legend-item">
               <span class="legend-line solid" style="background: #0098f0;"></span>
-              <span class="legend-text">Führung eigenständig auf Fahrbahn</span>
+              <span class="legend-text" data-i18n="contextPanel.bikeLanes.standalone">Standalone on roadway</span>
             </div>
             <div class="legend-item">
               <span class="legend-line dashed" style="--line-color: #174ed9;"></span>
-              <span class="legend-text">Führung mit Fußverkehr</span>
+              <span class="legend-text" data-i18n="contextPanel.bikeLanes.withPedestrians">Shared with pedestrians</span>
             </div>
             <div class="legend-item">
               <span class="legend-line dashed" style="--line-color: #9fb9f9;"></span>
-              <span class="legend-text">Fußverkehr mit Rad frei</span>
+              <span class="legend-text" data-i18n="contextPanel.bikeLanes.pedestriansWithBike">Pedestrian path, cycling allowed</span>
             </div>
             <div class="legend-item">
               <span class="legend-line dashed" style="--line-color: #0098f0;"></span>
-              <span class="legend-text">Führung mit Kfz (explizit)</span>
+              <span class="legend-text" data-i18n="contextPanel.bikeLanes.withCars">Shared with cars (explicit)</span>
             </div>
             <div class="legend-item">
               <span class="legend-line dashed" style="--line-color: #a97bea;"></span>
-              <span class="legend-text">Führungsform unklar</span>
+              <span class="legend-text" data-i18n="contextPanel.bikeLanes.unclear">Unclear type</span>
             </div>
             
             <div class="context-footer">
-              <span>Mehr auf 
+              <span data-i18n="contextPanel.bikeLanes.moreOn">More on</span>
                 <a id="radinfra-link" href="https://tilda-geo.de/regionen/radinfra" target="_blank" rel="noopener">radinfra.de</a>
               </span>
             </div>
@@ -462,7 +462,7 @@
   <div id="bottom-left-ui-container">
     <div id="custom-nav-control-wrapper">
       <!-- Dark Mode Toggle -->
-      <button id="dark-mode-toggle" class="map-settings-btn" title="Dark Mode umschalten">
+      <button id="dark-mode-toggle" class="map-settings-btn" data-i18n-title="mapSettings.darkMode" title="Toggle dark mode">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -475,12 +475,17 @@
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
       </button>
-    <div id="custom-nav-control"></div>
-    </div>
 
-    <!-- Map Settings Menu -->
-    <div id="map-settings-menu">
-      <button id="map-settings-toggle" class="map-settings-btn" title="Karten-Einstellungen">
+      <!-- Language Switcher -->
+      <select class="lang-switcher map-settings-btn" id="lang-switcher" aria-label="Language">
+        <option value="de">DE</option>
+        <option value="en" selected>EN</option>
+        <option value="fr">FR</option>
+      </select>
+
+      <!-- Map Settings Menu -->
+      <div id="map-settings-menu">
+      <button id="map-settings-toggle" class="map-settings-btn" data-i18n-title="mapSettings.settings" title="Map settings">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" fill-rule="nonzero">
           <path d="M20.0256266,12.1919251 C19.8772338,12.4293536 19.6806426,12.6329794 19.4485757,12.7896246 L13.3986821,16.8733027 C12.5534904,17.4438072 11.4465096,17.4438072 10.6013179,16.8733027 L4.55142428,12.7896246 C3.79043588,12.2759574 3.49533538,11.3303569 3.77229147,10.5 L10.6132495,15.0595795 C11.4005138,15.5844224 12.4112447,15.617225 13.2264422,15.1579876 L13.3867505,15.0595795 L20.2270621,10.4994959 C20.4087649,11.0456562 20.3545192,11.665697 20.0256266,12.1919251 Z M20.2270621,13.7494959 C20.4087649,14.2956562 20.3545192,14.915697 20.0256266,15.4419251 C19.8772338,15.6793536 19.6806426,15.8829794 19.4485757,16.0396246 L13.3986821,20.1233027 C12.5534904,20.6938072 11.4465096,20.6938072 10.6013179,20.1233027 L4.55142428,16.0396246 C3.79043588,15.5259574 3.49533538,14.5803569 3.77229147,13.75 L10.6132495,18.3095795 C11.4005138,18.8344224 12.4112447,18.867225 13.2264422,18.4079876 L13.3867505,18.3095795 L20.2270621,13.7494959 Z M13.3867505,3.42450033 L19.7519246,7.66794971 C20.2114532,7.97430216 20.3356271,8.59517151 20.0292747,9.0547002 C19.9560398,9.16455248 19.8617768,9.25881544 19.7519246,9.33205029 L13.3867505,13.5754997 C12.547002,14.135332 11.452998,14.135332 10.6132495,13.5754997 L4.24807544,9.33205029 C3.78854675,9.02569784 3.66437288,8.40482849 3.97072534,7.9452998 C4.0439602,7.83544752 4.13822315,7.74118456 4.24807544,7.66794971 L10.6132495,3.42450033 C11.452998,2.86466797 12.547002,2.86466797 13.3867505,3.42450033 Z M11.560754,4.60622527 L11.4452998,4.67257577 L5.705,8.5 L11.4452998,12.3274242 C11.7438771,12.5264757 12.1228116,12.5485926 12.439246,12.3937747 L12.5547002,12.3274242 L18.294,8.5 L12.5547002,4.67257577 C12.2561229,4.47352427 11.8771884,4.45140743 11.560754,4.60622527 Z"/>
         </svg>
@@ -488,29 +493,29 @@
       
       <div id="map-settings-panel" class="map-settings-panel hidden">
         <div class="map-settings-section">
-          <div class="map-settings-label">Kartenstil</div>
+          <div class="map-settings-label" data-i18n="mapSettings.mapStyle">Map style</div>
           <div class="basemap-buttons">
             <button class="basemap-btn" data-map="standard" title="Standard"></button>
             <button class="basemap-btn" data-map="dark" title="Dark"></button>
             <button class="basemap-btn" data-map="osm" title="OpenStreetMap"></button>
-            <button class="basemap-btn" data-map="satellite" title="Satellit"></button>
+            <button class="basemap-btn" data-map="satellite" data-i18n-title="mapSettings.satellite" title="Satellite"></button>
           </div>
         </div>
         
         <div class="map-settings-divider"></div>
         
         <div class="map-settings-section">
-          <div class="map-settings-label">Ansicht</div>
+          <div class="map-settings-label" data-i18n="mapSettings.view">View</div>
           <div class="switch-control">
-            <div class="switch-label" title="Mapterhorn Terrain Daten">
-              <span>Terrain</span>
+            <div class="switch-label" data-i18n-title="mapSettings.terrainTitle" title="Mapterhorn terrain data">
+              <span data-i18n="mapSettings.terrain">Terrain</span>
               <label class="switch">
                 <input type="checkbox" id="toggleTerrain" />
                 <span class="switch-slider"></span>
               </label>
             </div>
-            <div class="switch-label" title="Mapterhorn Hillshade Daten">
-              <span>Hillshade</span>
+            <div class="switch-label" data-i18n-title="mapSettings.hillshadeTitle" title="Mapterhorn hillshade data">
+              <span data-i18n="mapSettings.hillshade">Hillshade</span>
               <label class="switch">
                 <input type="checkbox" id="toggleHillshade" />
                 <span class="switch-slider"></span>
@@ -519,6 +524,7 @@
           </div>
         </div>
       </div>
+      <div id="custom-nav-control"></div>
     </div>
   </div>
 
@@ -531,7 +537,7 @@
         <line x1="10" y1="11" x2="10" y2="17"></line>
         <line x1="14" y1="11" x2="14" y2="17"></line>
       </svg>
-      <span>Löschen</span>
+      <span data-i18n="waypointMenu.delete">Delete</span>
     </div>
   </div>
 
@@ -544,7 +550,7 @@
           <path d="m9.9 16.97 7.436-7.436a8 8 0 0 0 2.145-3.89l.318-1.401-1.402.317a8 8 0 0 0-3.89 2.146L9.192 12.02m.707 4.95 2.122 3.535c1.178-1.178 2.828-2.828 0-5.657L9.899 16.97zm0 0-2.828-2.829m0 0L3.536 12.02c1.178-1.179 2.828-2.829 5.656 0m-2.12 2.121 2.12-2.121M4.95 16.263s-1.703 2.54-.707 3.536c.995.996 3.535-.707 3.535-.707" fill="white" stroke="white" stroke-width="1.5"/>
         </g>
       </svg>
-      <span>Startpunkt setzen</span>
+      <span data-i18n="contextMenu.setStart">Set as start</span>
     </div>
     <div class="context-menu-item" id="context-menu-set-end">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -558,7 +564,7 @@
           </svg>
         </g>
       </svg>
-      <span>Zielpunkt setzen</span>
+      <span data-i18n="contextMenu.setEnd">Set as destination</span>
     </div>
     <div class="context-menu-item" id="context-menu-set-waypoint">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -566,7 +572,7 @@
         <line x1="12" y1="8" x2="12" y2="16"></line>
         <line x1="8" y1="12" x2="16" y2="12"></line>
       </svg>
-      <span>Zwischenpunkt setzen</span>
+      <span data-i18n="contextMenu.setWaypoint">Set as waypoint</span>
     </div>
     <div class="context-menu-separator"></div>
     <a class="context-menu-item" id="context-menu-osm-query" target="_blank" rel="noopener noreferrer">
@@ -575,14 +581,14 @@
         <line x1="12" y1="16" x2="12" y2="12"></line>
         <line x1="12" y1="8" x2="12.01" y2="8"></line>
       </svg>
-      <span>OSM Objektabfrage</span>
+      <span data-i18n="contextMenu.osmQuery">OSM object query</span>
     </a>
     <a class="context-menu-item" id="context-menu-mapillary" target="_blank" rel="noopener noreferrer">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
         <circle cx="12" cy="13" r="4"></circle>
       </svg>
-      <span>zu Mapillary</span>
+      <span data-i18n="contextMenu.mapillary">Open in Mapillary</span>
     </a>
   </div>
 
@@ -601,13 +607,13 @@
       const themeOverride = localStorage.getItem('theme-override');
       
       if (themeOverride === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.dataset.theme = 'dark';
       } else if (themeOverride === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.dataset.theme = 'light';
       } else {
         // No manual override - let CSS media query handle it
         // Don't set data-theme, so @media (prefers-color-scheme: dark) can work
-        document.documentElement.removeAttribute('data-theme');
+        delete document.documentElement.dataset.theme;
       }
     })();
   </script>

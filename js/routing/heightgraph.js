@@ -9,6 +9,7 @@ import { setupCanvas, setupIndicatorCanvas } from './heightgraph/heightgraphCanv
 import { drawBackground, drawGrid, drawElevationLine, drawXAxisLabels, fillSegmentsByValue, getSurfaceColor, getRoadClassColor, getBicycleInfraColor } from './heightgraph/heightgraphDrawing.js';
 import { setupHeightgraphInteractivity, cleanupInteractivityHandlers } from './heightgraph/heightgraphInteractivity.js';
 import { updateHeightgraphStats } from './heightgraph/heightgraphStats.js';
+import { t } from '../i18n/i18n.js';
 
 // Store resize handler to prevent duplicate listeners
 let heightgraphResizeHandler = null;
@@ -98,7 +99,7 @@ export function drawHeightgraph(elevations, totalDistance, encodedValues = {}, c
   // Determine data to visualize
   let baseData = elevations.length > 0 ? elevations : [];
   let overlayData = [];
-  let dataLabel = 'Höhe (m)';
+  let dataLabel = t('heightgraph.elevation');
   let overlayLabel = '';
   let isNumeric = true;
   let hasOverlay = false;
@@ -113,7 +114,7 @@ export function drawHeightgraph(elevations, totalDistance, encodedValues = {}, c
     hasOverlay = true;
   } else if (selectedType === 'street_name' && encodedValues.street_name) {
     overlayData = encodedValues.street_name;
-    overlayLabel = 'Straßenname';
+    overlayLabel = t('heightgraph.streetName');
     isNumeric = false;
     hasOverlay = true;
   }
@@ -128,7 +129,7 @@ export function drawHeightgraph(elevations, totalDistance, encodedValues = {}, c
     ctx.fillStyle = '#6b7280';
     ctx.font = '12px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Keine Daten verfügbar', width / 2, height / 2);
+    ctx.fillText(t('heightgraph.noData'), width / 2, height / 2);
     return;
   }
   

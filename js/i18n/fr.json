@@ -1,0 +1,169 @@
+{
+  "routing": {
+    "profiles": {
+      "bike": "Vélo (Personnalisable)",
+      "car": "Voiture (Personnalisable)"
+    },
+    "setStart": "Définir le point de départ sur la carte",
+    "setEnd": "Définir le point d'arrivée sur la carte",
+    "addWaypoint": "Ajouter un point de passage",
+    "collapse": "Réduire/Développer",
+    "placeholder": "Adresse ou coordonnées",
+    "waypoints": "Points de passage",
+    "autoSort": "Tri automatique",
+    "autoSortTitle": "Activer l'optimisation automatique de l'ordre des étapes",
+    "calculate": "Calculer l'itinéraire",
+    "calculating": "Calcul en cours...",
+    "calculateError": "Erreur lors du calcul de l'itinéraire",
+    "toggleVisibility": "Masquer/Afficher",
+    "exportGpx": "Exporter en GPX",
+    "clear": "Effacer",
+    "mapillaryWeight": "Pondération Mapillary :",
+    "carAccess": "Ignorer les restrictions d'accès",
+    "unpavedRoads": "Éviter les routes non revêtues",
+    "avoidPushing": "Éviter de pousser le vélo",
+    "collapsePanel": "Réduire",
+    "expandPanel": "Développer",
+    "hide": "Masquer",
+    "show": "Afficher",
+    "pointNames": {
+      "start": "Point de départ",
+      "end": "Point d'arrivée",
+      "waypoint": "Point de passage"
+    }
+  },
+  "heightgraph": {
+    "title": "Profil altimétrique",
+    "mapillaryCoverage": "Couverture Mapillary",
+    "surface": "Revêtement",
+    "roadClass": "Type de voie",
+    "bicycleInfra": "Infrastructure cyclable",
+    "elevation": "Altitude (m)",
+    "streetName": "Nom de rue",
+    "noData": "Aucune donnée disponible",
+    "roadEnvironment": "Environnement",
+    "roadAccess": "Accès",
+    "time": "Temps (s)",
+    "distance": "Distance (m)",
+    "tooltip": {
+      "distance": "Distance",
+      "elevation": "Altitude",
+      "yes": "Oui",
+      "no": "Non"
+    }
+  },
+  "contextPanel": {
+    "title": "Couches contextuelles",
+    "missingStreets": {
+      "title": "Segments de rue avec...",
+      "sourceInfo": "Source : OSM Mapillary Missing Streets ; tilda-geo.de",
+      "panorama": "...suffisamment de photos panoramiques",
+      "regular": "...suffisamment de photos régulières",
+      "missing": "...photos manquantes",
+      "moreOn": "Plus sur"
+    },
+    "bikeLanes": {
+      "title": "Infrastructure cyclable",
+      "sourceInfo": "Source : © OpenStreetMap ; tilda-geo.de",
+      "separated": "Piste séparée de la circulation",
+      "standalone": "Voie autonome sur chaussée",
+      "withPedestrians": "Partagée avec les piétons",
+      "pedestriansWithBike": "Trottoir, vélos autorisés",
+      "withCars": "Partagée avec les voitures (explicite)",
+      "unclear": "Type indéterminé",
+      "moreOn": "Plus sur"
+    }
+  },
+  "mapSettings": {
+    "darkMode": "Basculer le mode sombre",
+    "settings": "Paramètres de la carte",
+    "mapStyle": "Style de carte",
+    "view": "Vue",
+    "standard": "Standard",
+    "dark": "Sombre",
+    "osm": "OpenStreetMap",
+    "satellite": "Satellite",
+    "terrain": "Relief",
+    "hillshade": "Ombrage",
+    "terrainTitle": "Données de relief Mapterhorn",
+    "hillshadeTitle": "Données d'ombrage Mapterhorn"
+  },
+  "contextMenu": {
+    "setStart": "Définir comme départ",
+    "setEnd": "Définir comme destination",
+    "setWaypoint": "Définir comme étape",
+    "osmQuery": "Interroger les objets OSM",
+    "mapillary": "Ouvrir dans Mapillary"
+  },
+  "waypointMenu": {
+    "delete": "Supprimer",
+    "dragHandle": "Glisser pour déplacer",
+    "removeWaypoint": "Supprimer le point de passage",
+    "alt": "Point de passage {index}"
+  },
+  "errors": {
+    "outOfBounds": "Seules Berlin et le Brandebourg sont actuellement disponibles.",
+    "noRouteFound": "Aucun itinéraire trouvé",
+    "networkError": "Erreur réseau lors du chargement de l'itinéraire",
+    "invalidCoordinates": "Coordonnées invalides",
+    "calculationInProgress": "Calcul d'itinéraire déjà en cours, nouvelle requête ignorée",
+    "missingStartEnd": "Veuillez définir un point de départ et d'arrivée",
+    "noRouteExport": "Aucun itinéraire à exporter",
+    "noRouteData": "Aucune donnée d'itinéraire disponible",
+    "checkGraphhopper": "Vérifiez que GraphHopper est en cours d'exécution",
+    "coordsMissing": "Coordonnées manquantes",
+    "coordsNotArray": "Les coordonnées doivent être un tableau d'au moins 2 valeurs",
+    "coordsInvalidFormat": "Les coordonnées doivent être un tableau [lng, lat] ou un objet {lng, lat}",
+    "coordsInvalidNumbers": "La longitude et la latitude doivent être des nombres valides",
+    "coordsLngRange": "La longitude doit être comprise entre {min} et {max}",
+    "coordsLatRange": "La latitude doit être comprise entre {min} et {max}",
+    "httpStatus": "Erreur HTTP : statut {status}",
+    "httpStatusWithMessage": "Erreur HTTP : statut {status}, message : {message}",
+    "routePointsFormat": "Format des points d'itinéraire non reconnu. Réponse : {response}",
+    "routeSourceMissing": "La source de l'itinéraire est introuvable et n'a pas pu être créée"
+  },
+  "bicycleInfra": {
+    "none": "Aucune infrastructure cyclable spécifique",
+    "bicycleroad": "Rue cyclable",
+    "bicycleroad_vehicledestination": "Rue cyclable,<br>riverains/voitures autorisés",
+    "pedestrianareabicycleyes": "Zone piétonne,<br>vélos autorisés",
+    "cycleway_adjoining": "Piste cyclable,<br>le long de la route",
+    "cycleway_isolated": "Piste cyclable,<br>indépendante",
+    "cycleway_adjoiningorisolated": "Piste cyclable (fallback)",
+    "cyclewaylink": "Connecteur de<br>routage cyclable",
+    "crossing": "Traversée de route",
+    "cyclewayonhighway_advisory": "Bande cyclable conseillée",
+    "cyclewayonhighway_exclusive": "Bande cyclable exclusive",
+    "cyclewayonhighway_advisoryorexclusive": "Bande cyclable/<br>conseillée (fallback)",
+    "cyclewayonhighwaybetweenlanes": "Bande cyclable centrale<br>(\"contresens\")",
+    "cyclewayonhighwayprotected": "Piste cyclable protégée (PBL)",
+    "sharedbuslanebikewithbus": "Bande cyclable avec<br>accès bus",
+    "sharedbuslanebuswithbike": "Couloir de bus<br>avec vélos autorisés",
+    "sharedmotorvehiclelane": "Voie de circulation partagée",
+    "footandcyclewaysegregated_adjoining": "Voie mixte séparée,<br>le long de la route",
+    "footandcyclewaysegregated_isolated": "Voie mixte séparée,<br>indépendante",
+    "footandcyclewaysegregated_adjoiningorisolated": "Voie mixte séparée (fallback)",
+    "footandcyclewayshared_adjoining": "Voie mixte partagée,<br>le long de la route",
+    "footandcyclewayshared_isolated": "Voie mixte partagée,<br>indépendante",
+    "footandcyclewayshared_adjoiningorisolated": "Voie mixte partagée (fallback)",
+    "footwaybicycleyes_adjoining": "Trottoir, vélos autorisés,<br>le long de la route",
+    "footwaybicycleyes_isolated": "Trottoir, vélos autorisés,<br>indépendant",
+    "footwaybicycleyes_adjoiningorisolated": "Trottoir, vélos autorisés<br>(fallback)",
+    "needsclarification": "Type indéterminé -<br>tags insuffisants"
+  },
+  "github": {
+    "reportIssue": "Signaler un problème ou donner un retour"
+  },
+  "geocoder": {
+    "placeholder": "Rechercher une adresse...",
+    "unknownAddress": "Adresse inconnue",
+    "noResults": "Aucun résultat trouvé"
+  },
+  "routeInfo": {
+    "turns": "virages",
+    "weight": "Poids"
+  },
+  "lang": {
+    "switcher": "Langue"
+  }
+}

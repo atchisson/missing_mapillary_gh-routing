@@ -1,0 +1,169 @@
+{
+  "routing": {
+    "profiles": {
+      "bike": "Fahrrad (Anpassbar)",
+      "car": "Auto (Anpassbar)"
+    },
+    "setStart": "Startpunkt auf Karte setzen",
+    "setEnd": "Zielpunkt auf Karte setzen",
+    "addWaypoint": "Zwischenpunkt hinzufügen",
+    "collapse": "Ein-/Ausklappen",
+    "placeholder": "Adresse oder Koordinaten",
+    "waypoints": "Zwischenpunkte",
+    "autoSort": "Auto-Sortierung",
+    "autoSortTitle": "Automatische Optimierung der Reihenfolge aktivieren",
+    "calculate": "Route berechnen",
+    "calculating": "Berechne...",
+    "calculateError": "Fehler beim Berechnen der Route",
+    "toggleVisibility": "Ausblenden/Einblenden",
+    "exportGpx": "GPX exportieren",
+    "clear": "Löschen",
+    "mapillaryWeight": "Mapillary Weight:",
+    "carAccess": "Durchfahrtsbeschränkungen ignorieren",
+    "unpavedRoads": "Unbefestigte Wege meiden",
+    "avoidPushing": "Schieben verhindern",
+    "collapsePanel": "Einklappen",
+    "expandPanel": "Ausklappen",
+    "hide": "Ausblenden",
+    "show": "Einblenden",
+    "pointNames": {
+      "start": "Startpunkt",
+      "end": "Endpunkt",
+      "waypoint": "Zwischenpunkt"
+    }
+  },
+  "heightgraph": {
+    "title": "Höhenprofil",
+    "mapillaryCoverage": "Mapillary Coverage",
+    "surface": "Surface",
+    "roadClass": "Straßenklasse",
+    "bicycleInfra": "Fahrradinfrastruktur",
+    "elevation": "Höhe (m)",
+    "streetName": "Straßenname",
+    "noData": "Keine Daten verfügbar",
+    "roadEnvironment": "Umgebung",
+    "roadAccess": "Zugang",
+    "time": "Zeit (s)",
+    "distance": "Distanz (m)",
+    "tooltip": {
+      "distance": "Distanz",
+      "elevation": "Höhe",
+      "yes": "Ja",
+      "no": "Nein"
+    }
+  },
+  "contextPanel": {
+    "title": "Kontext-Layer",
+    "missingStreets": {
+      "title": "Straßensegmente mit...",
+      "sourceInfo": "Quelle: OSM Mapillary Missing Streets; tilda-geo.de",
+      "panorama": "...ausreichend Panorama-Fotos",
+      "regular": "...ausreichend regulären Fotos",
+      "missing": "...fehlenden Fotos",
+      "moreOn": "Mehr auf"
+    },
+    "bikeLanes": {
+      "title": "Radinfrastruktur",
+      "sourceInfo": "Quelle: © OpenStreetMap; tilda-geo.de",
+      "separated": "Führung baul. abgesetzt von Kfz",
+      "standalone": "Führung eigenständig auf Fahrbahn",
+      "withPedestrians": "Führung mit Fußverkehr",
+      "pedestriansWithBike": "Fußverkehr mit Rad frei",
+      "withCars": "Führung mit Kfz (explizit)",
+      "unclear": "Führungsform unklar",
+      "moreOn": "Mehr auf"
+    }
+  },
+  "mapSettings": {
+    "darkMode": "Dark Mode umschalten",
+    "settings": "Karten-Einstellungen",
+    "mapStyle": "Kartenstil",
+    "view": "Ansicht",
+    "standard": "Standard",
+    "dark": "Dark",
+    "osm": "OpenStreetMap",
+    "satellite": "Satellit",
+    "terrain": "Terrain",
+    "hillshade": "Hillshade",
+    "terrainTitle": "Mapterhorn Terrain Daten",
+    "hillshadeTitle": "Mapterhorn Hillshade Daten"
+  },
+  "contextMenu": {
+    "setStart": "Startpunkt setzen",
+    "setEnd": "Zielpunkt setzen",
+    "setWaypoint": "Zwischenpunkt setzen",
+    "osmQuery": "OSM Objektabfrage",
+    "mapillary": "zu Mapillary"
+  },
+  "waypointMenu": {
+    "delete": "Löschen",
+    "dragHandle": "Zum Verschieben ziehen",
+    "removeWaypoint": "Zwischenpunkt entfernen",
+    "alt": "Zwischenpunkt {index}"
+  },
+  "errors": {
+    "outOfBounds": "Aktuell stehen nur Berlin und Brandenburg zur Verfügung.",
+    "noRouteFound": "Keine Route gefunden",
+    "networkError": "Netzwerkfehler beim Abrufen der Route",
+    "invalidCoordinates": "Ungültige Koordinaten",
+    "calculationInProgress": "Route-Berechnung bereits in Arbeit, ignoriere neue Anfrage",
+    "missingStartEnd": "Bitte Start- und Endpunkt setzen",
+    "noRouteExport": "Keine Route zum Exportieren vorhanden",
+    "noRouteData": "Keine Routendaten verfügbar",
+    "checkGraphhopper": "Stelle sicher, dass GraphHopper läuft",
+    "coordsMissing": "Koordinaten fehlen",
+    "coordsNotArray": "Koordinaten müssen ein Array mit mindestens 2 Werten sein",
+    "coordsInvalidFormat": "Koordinaten müssen ein Array [lng, lat] oder Objekt {lng, lat} sein",
+    "coordsInvalidNumbers": "Länge und Breite müssen gültige Zahlen sein",
+    "coordsLngRange": "Länge muss zwischen {min} und {max} liegen",
+    "coordsLatRange": "Breite muss zwischen {min} und {max} liegen",
+    "httpStatus": "HTTP-Fehler! Status: {status}",
+    "httpStatusWithMessage": "HTTP-Fehler! Status: {status}, Meldung: {message}",
+    "routePointsFormat": "Routenpunktformat nicht erkannt. Antwort: {response}",
+    "routeSourceMissing": "Routenquelle wurde nicht gefunden und konnte nicht erstellt werden"
+  },
+  "bicycleInfra": {
+    "none": "Keine spezielle Fahrradinfrastruktur",
+    "bicycleroad": "Fahrradstraße",
+    "bicycleroad_vehicledestination": "Fahrradstraße mit<br>Anlieger/Kfz frei",
+    "pedestrianareabicycleyes": "Fußgängerzone,<br>Fahrrad frei",
+    "cycleway_adjoining": "Radweg,<br>straßenbegleitend",
+    "cycleway_isolated": "Radweg,<br>selbstständig geführt",
+    "cycleway_adjoiningorisolated": "Radweg (Fallback)",
+    "cyclewaylink": "Radweg-Routing-<br>Verbindungsstück",
+    "crossing": "Straßenquerung",
+    "cyclewayonhighway_advisory": "Schutzstreifen",
+    "cyclewayonhighway_exclusive": "Radfahrstreifen",
+    "cyclewayonhighway_advisoryorexclusive": "Radfahrstreifen/<br>Schutzstreifen (Fallback)",
+    "cyclewayonhighwaybetweenlanes": "Radfahrstreifen in<br>Mittellage (\"Angstweiche\")",
+    "cyclewayonhighwayprotected": "Protected Bike Lane (PBL)",
+    "sharedbuslanebikewithbus": "Radfahrstreifen mit<br>Freigabe Busverkehr",
+    "sharedbuslanebuswithbike": "Bussonderfahrstreifen<br>mit Fahrrad frei",
+    "sharedmotorvehiclelane": "Gemeinsamer Fahrstreifen",
+    "footandcyclewaysegregated_adjoining": "Getrennter Geh- und<br>Radweg, straßenbegleitend",
+    "footandcyclewaysegregated_isolated": "Getrennter Geh- und<br>Radweg, selbstständig",
+    "footandcyclewaysegregated_adjoiningorisolated": "Getrennter Geh- und<br>Radweg (Fallback)",
+    "footandcyclewayshared_adjoining": "Gemeinsamer Geh- und<br>Radweg, straßenbegleitend",
+    "footandcyclewayshared_isolated": "Gemeinsamer Geh- und<br>Radweg, selbstständig",
+    "footandcyclewayshared_adjoiningorisolated": "Gemeinsamer Geh- und<br>Radweg (Fallback)",
+    "footwaybicycleyes_adjoining": "Gehweg, Fahrrad frei,<br>straßenbegleitend",
+    "footwaybicycleyes_isolated": "Gehweg, Fahrrad frei,<br>selbstständig",
+    "footwaybicycleyes_adjoiningorisolated": "Gehweg, Fahrrad frei<br>(Fallback)",
+    "needsclarification": "Führungsform unklar -<br>Tags nicht ausreichend"
+  },
+  "github": {
+    "reportIssue": "Fehler melden oder Feedback geben"
+  },
+  "geocoder": {
+    "placeholder": "Adresse suchen...",
+    "unknownAddress": "Unbekannte Adresse",
+    "noResults": "Keine Ergebnisse gefunden"
+  },
+  "routeInfo": {
+    "turns": "Abzweige",
+    "weight": "Gewicht"
+  },
+  "lang": {
+    "switcher": "Sprache"
+  }
+}

@@ -1,3 +1,6 @@
+// 📦 i18n
+import { initI18n, applyTranslations, setLang } from './js/i18n/i18n.js';
+
 // 📦 Routing
 import { setupRouting } from './js/routing/routing.js';
 
@@ -50,8 +53,18 @@ if (document.readyState === 'loading') {
 }
 
 (async () => {
+  await initI18n();
+  applyTranslations();
   initMap();
 })();
+
+// Lang switcher
+document.addEventListener('DOMContentLoaded', () => {
+  const langSwitcher = document.getElementById('lang-switcher');
+  if (langSwitcher) {
+    langSwitcher.addEventListener('change', () => setLang(langSwitcher.value));
+  }
+});
 
 async function initMap() {
   // Load pmtiles protocol

@@ -1,17 +1,19 @@
 // Constants used throughout the application
 
+import { t } from '../i18n/i18n.js';
+
 export const GRAPHHOPPER_URL = 'https://ghroute.vizsim.de';
 //export const GRAPHHOPPER_URL = 'https://ghroute.duckdns.org';
 // const GRAPHHOPPER_URL = 'http://localhost:8989'; // For local development
 
-// Error messages
+// Error messages — dynamic getters so they reflect the current language at call time
 export const ERROR_MESSAGES = {
-  OUT_OF_BOUNDS: 'Aktuell stehen nur Berlin und Brandenburg zur Verfügung.',
-  NO_ROUTE_FOUND: 'Keine Route gefunden',
-  NETWORK_ERROR: 'Netzwerkfehler beim Abrufen der Route',
-  INVALID_COORDINATES: 'Ungültige Koordinaten',
-  ROUTE_CALCULATION_IN_PROGRESS: 'Route-Berechnung bereits in Arbeit, ignoriere neue Anfrage',
-  MISSING_START_END: 'Bitte Start- und Endpunkt setzen'
+  get OUT_OF_BOUNDS() { return t('errors.outOfBounds'); },
+  get NO_ROUTE_FOUND() { return t('errors.noRouteFound'); },
+  get NETWORK_ERROR() { return t('errors.networkError'); },
+  get INVALID_COORDINATES() { return t('errors.invalidCoordinates'); },
+  get ROUTE_CALCULATION_IN_PROGRESS() { return t('errors.calculationInProgress'); },
+  get MISSING_START_END() { return t('errors.missingStartEnd'); }
 };
 
 // Route calculation settings

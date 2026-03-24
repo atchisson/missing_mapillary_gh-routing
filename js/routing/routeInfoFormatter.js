@@ -1,5 +1,7 @@
 // Route info HTML formatter - extracted to avoid duplication
 
+import { t } from '../i18n/i18n.js';
+
 /**
  * Format number with thousand separator (thin space)
  */
@@ -28,7 +30,7 @@ export function formatTime(timeSeconds) {
  */
 export function generateRouteInfoHTML(path) {
   if (!path) {
-    return '<div class="route-info-compact">Keine Routendaten verfügbar</div>';
+    return `<div class="route-info-compact">${t('errors.noRouteData')}</div>`;
   }
 
   const distance = (path.distance / 1000).toFixed(2);
@@ -83,7 +85,7 @@ export function generateRouteInfoHTML(path) {
         <svg width="16" height="16" viewBox="0 0 403.262 460.531" fill="currentColor">
           <path d="M403.262,254.156v206.375h-70.628V254.156c0-32.26-8.411-56.187-25.718-73.16c-24.636-24.166-60.904-27.919-71.934-28.469 h-50.747l29.09,73.648c0.979,2.468,0.187,5.284-1.927,6.88c-2.116,1.604-5.048,1.593-7.152-0.03L59.574,121.797 c-1.445-1.126-2.305-2.84-2.305-4.678c0-1.835,0.86-3.561,2.305-4.672L204.246,1.218c1.064-0.819,2.323-1.218,3.6-1.218 c1.247,0,2.494,0.387,3.552,1.185c2.119,1.593,2.905,4.413,1.927,6.889l-29.09,73.642l37.442,0.109c0,0,3.588,0.198,8.565,0.624 l-0.018-0.63c3.174-0.067,75.568-0.859,126.153,48.761C387.492,161.092,403.262,202.665,403.262,254.156z"/>
         </svg>
-        <span class="route-info-compact-label">turns:</span>
+        <span class="route-info-compact-label">${t('routeInfo.turns')}:</span>
         <span class="route-info-compact-value">${instructionCount}</span>
       </div>
       ` : ''}
@@ -97,7 +99,7 @@ export function generateRouteInfoHTML(path) {
           <path d="M153.419,382.424H82.567c-7.176,0-12.992-5.817-12.992-12.992V142.569c0-7.176,5.817-12.992,12.992-12.992h70.852c7.176,0,12.992,5.817,12.992,12.992v226.863C166.411,376.608,160.594,382.424,153.419,382.424z"/>
           <path d="M358.582,129.577h70.852c7.176,0,12.992,5.817,12.992,12.992v226.863c0,7.176-5.817,12.992-12.992,12.992h-70.852c-7.176,0-12.992-5.817-12.992-12.992V142.569C345.589,135.394,351.406,129.577,358.582,129.577z"/>
         </svg>
-        <span class="route-info-compact-label">Weight:</span>
+        <span class="route-info-compact-label">${t('routeInfo.weight')}:</span>
         <span class="route-info-compact-value">${weight}</span>
       </div>
       ` : ''}

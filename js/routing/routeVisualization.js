@@ -2,6 +2,7 @@
 
 import { routeState } from './routeState.js';
 import { getColorForEncodedValue, getBicycleInfraDescription } from './colorSchemes.js';
+import { t } from '../i18n/i18n.js';
 
 export function setupRouteHover(map) {
   // Create a popup for showing encoded values on hover
@@ -170,22 +171,22 @@ export function setupRouteHover(map) {
           encodedValues.mapillary_coverage[dataIndex] !== undefined && 
           encodedValues.mapillary_coverage[dataIndex] !== null) {
         selectedValue = encodedValues.mapillary_coverage[dataIndex];
-        valueLabel = 'Mapillary Coverage';
+        valueLabel = t('heightgraph.mapillaryCoverage');
       } else if (selectedType === 'surface' && encodedValues.surface && 
                  encodedValues.surface[dataIndex] !== undefined && 
                  encodedValues.surface[dataIndex] !== null) {
         selectedValue = encodedValues.surface[dataIndex];
-        valueLabel = 'Surface';
+        valueLabel = t('heightgraph.surface');
       } else if (selectedType === 'road_class' && encodedValues.road_class && 
                  encodedValues.road_class[dataIndex] !== undefined && 
                  encodedValues.road_class[dataIndex] !== null) {
         selectedValue = encodedValues.road_class[dataIndex];
-        valueLabel = 'Road Class';
+        valueLabel = t('heightgraph.roadClass');
       } else if (selectedType === 'bicycle_infra' && encodedValues.bicycle_infra && 
                  encodedValues.bicycle_infra[dataIndex] !== undefined && 
                  encodedValues.bicycle_infra[dataIndex] !== null) {
         selectedValue = encodedValues.bicycle_infra[dataIndex];
-        valueLabel = 'Bicycle Infrastructure';
+        valueLabel = t('heightgraph.bicycleInfra');
       }
       
       // Highlight the hovered segment by making it thicker (always show, even if no value)
@@ -231,7 +232,7 @@ export function setupRouteHover(map) {
       if (selectedValue !== null) {
         let displayValue = '';
         if (typeof selectedValue === 'boolean') {
-          displayValue = selectedValue ? 'Ja' : 'Nein';
+          displayValue = selectedValue ? t('heightgraph.tooltip.yes') : t('heightgraph.tooltip.no');
         } else if (selectedType === 'bicycle_infra') {
           // Use description for bicycle_infra
           const description = getBicycleInfraDescription(selectedValue);

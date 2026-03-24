@@ -1,12 +1,13 @@
 // GPX Export functionality
 
 import { routeState } from './routeState.js';
+import { t } from '../i18n/i18n.js';
 
 export function exportRouteToGPX() {
   const { currentRouteData } = routeState;
   
   if (!currentRouteData || !currentRouteData.coordinates || currentRouteData.coordinates.length === 0) {
-    alert('Keine Route zum Exportieren vorhanden');
+    alert(t('errors.noRouteExport'));
     return;
   }
 

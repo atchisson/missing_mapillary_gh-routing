@@ -4,6 +4,7 @@ import { routeState } from '../routeState.js';
 import { calculateDistance } from './heightgraphUtils.js';
 import { getSurfaceColorForStats, getRoadClassColorForStats, getBicycleInfraColorForStats } from './heightgraphDrawing.js';
 import { getBicycleInfraDescription, getColorForEncodedValue } from '../colorSchemes.js';
+import { t } from '../../i18n/i18n.js';
 
 /**
  * Calculate and display statistics for the selected encoded value
@@ -65,7 +66,7 @@ export function updateHeightgraphStats(encodedType, encodedValues) {
     let backgroundColor = '';
     
     if (encodedType === 'mapillary_coverage') {
-      displayKey = key === 'true' ? 'true' : 'false';
+      displayKey = key === 'true' ? t('heightgraph.tooltip.yes') : t('heightgraph.tooltip.no');
       backgroundColor = key === 'true' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(236, 72, 153, 0.15)';
     } else if (encodedType === 'surface') {
       backgroundColor = getSurfaceColorForStats(key);

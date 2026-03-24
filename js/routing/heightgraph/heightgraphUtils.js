@@ -1,19 +1,20 @@
 // Heightgraph utility functions
 
 import { HEIGHTGRAPH_CONFIG } from './heightgraphConfig.js';
+import { t } from '../../i18n/i18n.js';
 
 /**
  * Get label for encoded type
  */
 export function getLabelForEncodedType(type) {
   const labels = {
-    'road_class': 'Straßenklasse',
-    'road_environment': 'Umgebung',
-    'road_access': 'Zugang',
-    'bicycle_infra': 'Fahrradinfrastruktur',
-    'time': 'Zeit (s)',
-    'distance': 'Distanz (m)',
-    'street_name': 'Straßenname'
+    'road_class': t('heightgraph.roadClass'),
+    'road_environment': t('heightgraph.roadEnvironment'),
+    'road_access': t('heightgraph.roadAccess'),
+    'bicycle_infra': t('heightgraph.bicycleInfra'),
+    'time': t('heightgraph.time'),
+    'distance': t('heightgraph.distance'),
+    'street_name': t('heightgraph.streetName')
   };
   return labels[type] || type;
 }

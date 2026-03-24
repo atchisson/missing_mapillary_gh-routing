@@ -1,4 +1,6 @@
 // geocoder.js
+import { t } from '../i18n/i18n.js';
+
 export function setupPhotonGeocoder(map) {
   const container = document.createElement("div");
   container.className = "geocoder";
@@ -8,8 +10,8 @@ export function setupPhotonGeocoder(map) {
         <circle cx="11" cy="11" r="8"></circle>
         <path d="m21 21-4.35-4.35"></path>
       </svg>
-      <input type="text" id="search" placeholder="Adresse suchen..." autocomplete="off" />
-      <button class="geocoder-clear" id="geocoder-clear" style="display: none;" title="Löschen">
+      <input type="text" id="search" data-i18n-placeholder="geocoder.placeholder" placeholder="${t('geocoder.placeholder')}" autocomplete="off" />
+      <button class="geocoder-clear" id="geocoder-clear" style="display: none;" data-i18n-title="routing.clear" title="${t('routing.clear')}">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -71,9 +73,9 @@ export function setupPhotonGeocoder(map) {
       // Only housenumber available
       primary = props.housenumber;
     } else {
-      primary = 'Unbekannte Adresse';
+      primary = t('geocoder.unknownAddress');
     }
-    
+
     const location = [];
     if (props.city) location.push(props.city);
     if (props.state) location.push(props.state);
@@ -105,7 +107,7 @@ export function setupPhotonGeocoder(map) {
     selectedIndex = -1;
     
     if (features.length === 0) {
-      resultsEl.innerHTML = '<div class="geocoder-no-results">Keine Ergebnisse gefunden</div>';
+      resultsEl.innerHTML = `<div class="geocoder-no-results">${t('geocoder.noResults')}</div>`;
       resultsEl.style.display = "block";
       return;
     }
@@ -262,7 +264,7 @@ export function formatGeocoderResult(feature) {
     // Only housenumber available
     primary = props.housenumber;
   } else {
-    primary = 'Unbekannte Adresse';
+    primary = t('geocoder.unknownAddress');
   }
   
   const location = [];
@@ -316,7 +318,7 @@ export function setupRoutingInputGeocoder(inputElement, map, onSelect) {
     selectedIndex = -1;
     
     if (features.length === 0) {
-      container.innerHTML = '<div class="geocoder-no-results">Keine Ergebnisse gefunden</div>';
+      container.innerHTML = `<div class="geocoder-no-results">${t('geocoder.noResults')}</div>`;
       container.style.display = 'block';
       return;
     }

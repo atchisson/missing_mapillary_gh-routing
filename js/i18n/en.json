@@ -1,0 +1,169 @@
+{
+  "routing": {
+    "profiles": {
+      "bike": "Bicycle (Customizable)",
+      "car": "Car (Customizable)"
+    },
+    "setStart": "Set start point on map",
+    "setEnd": "Set end point on map",
+    "addWaypoint": "Add waypoint",
+    "collapse": "Expand/Collapse",
+    "placeholder": "Address or coordinates",
+    "waypoints": "Waypoints",
+    "autoSort": "Auto-sort",
+    "autoSortTitle": "Enable automatic waypoint order optimization",
+    "calculate": "Calculate route",
+    "calculating": "Calculating...",
+    "calculateError": "Error calculating route",
+    "toggleVisibility": "Hide/Show",
+    "exportGpx": "Export GPX",
+    "clear": "Clear",
+    "mapillaryWeight": "Mapillary Weight:",
+    "carAccess": "Ignore access restrictions",
+    "unpavedRoads": "Avoid unpaved roads",
+    "avoidPushing": "Avoid pushing bike",
+    "collapsePanel": "Collapse",
+    "expandPanel": "Expand",
+    "hide": "Hide",
+    "show": "Show",
+    "pointNames": {
+      "start": "Start point",
+      "end": "End point",
+      "waypoint": "Waypoint"
+    }
+  },
+  "heightgraph": {
+    "title": "Elevation Profile",
+    "mapillaryCoverage": "Mapillary Coverage",
+    "surface": "Surface",
+    "roadClass": "Road Class",
+    "bicycleInfra": "Bicycle Infrastructure",
+    "elevation": "Elevation (m)",
+    "streetName": "Street name",
+    "noData": "No data available",
+    "roadEnvironment": "Environment",
+    "roadAccess": "Access",
+    "time": "Time (s)",
+    "distance": "Distance (m)",
+    "tooltip": {
+      "distance": "Distance",
+      "elevation": "Elevation",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "contextPanel": {
+    "title": "Context Layers",
+    "missingStreets": {
+      "title": "Street segments with...",
+      "sourceInfo": "Source: OSM Mapillary Missing Streets; tilda-geo.de",
+      "panorama": "...enough panoramic photos",
+      "regular": "...enough regular photos",
+      "missing": "...missing photos",
+      "moreOn": "More on"
+    },
+    "bikeLanes": {
+      "title": "Cycling infrastructure",
+      "sourceInfo": "Source: © OpenStreetMap; tilda-geo.de",
+      "separated": "Separated from motor traffic",
+      "standalone": "Standalone on roadway",
+      "withPedestrians": "Shared with pedestrians",
+      "pedestriansWithBike": "Pedestrian path, cycling allowed",
+      "withCars": "Shared with cars (explicit)",
+      "unclear": "Unclear type",
+      "moreOn": "More on"
+    }
+  },
+  "mapSettings": {
+    "darkMode": "Toggle dark mode",
+    "settings": "Map settings",
+    "mapStyle": "Map style",
+    "view": "View",
+    "standard": "Standard",
+    "dark": "Dark",
+    "osm": "OpenStreetMap",
+    "satellite": "Satellite",
+    "terrain": "Terrain",
+    "hillshade": "Hillshade",
+    "terrainTitle": "Mapterhorn terrain data",
+    "hillshadeTitle": "Mapterhorn hillshade data"
+  },
+  "contextMenu": {
+    "setStart": "Set as start",
+    "setEnd": "Set as destination",
+    "setWaypoint": "Set as waypoint",
+    "osmQuery": "OSM object query",
+    "mapillary": "Open in Mapillary"
+  },
+  "waypointMenu": {
+    "delete": "Delete",
+    "dragHandle": "Drag to move",
+    "removeWaypoint": "Remove waypoint",
+    "alt": "Waypoint {index}"
+  },
+  "errors": {
+    "outOfBounds": "Only Berlin and Brandenburg are currently available.",
+    "noRouteFound": "No route found",
+    "networkError": "Network error fetching route",
+    "invalidCoordinates": "Invalid coordinates",
+    "calculationInProgress": "Route calculation already in progress, ignoring new request",
+    "missingStartEnd": "Please set start and end point",
+    "noRouteExport": "No route to export",
+    "noRouteData": "No route data available",
+    "checkGraphhopper": "Make sure GraphHopper is running",
+    "coordsMissing": "Coordinates missing",
+    "coordsNotArray": "Coordinates must be an array with at least 2 values",
+    "coordsInvalidFormat": "Coordinates must be an array [lng, lat] or object {lng, lat}",
+    "coordsInvalidNumbers": "Longitude and latitude must be valid numbers",
+    "coordsLngRange": "Longitude must be between {min} and {max}",
+    "coordsLatRange": "Latitude must be between {min} and {max}",
+    "httpStatus": "HTTP error! status: {status}",
+    "httpStatusWithMessage": "HTTP error! status: {status}, message: {message}",
+    "routePointsFormat": "Route points format not recognized. Response: {response}",
+    "routeSourceMissing": "Route source not found and could not be created"
+  },
+  "bicycleInfra": {
+    "none": "No special cycling infrastructure",
+    "bicycleroad": "Bicycle road",
+    "bicycleroad_vehicledestination": "Bicycle road,<br>access for residents/cars",
+    "pedestrianareabicycleyes": "Pedestrian zone,<br>cycling allowed",
+    "cycleway_adjoining": "Cycle path,<br>alongside road",
+    "cycleway_isolated": "Cycle path,<br>standalone",
+    "cycleway_adjoiningorisolated": "Cycle path (fallback)",
+    "cyclewaylink": "Cycle path<br>routing connector",
+    "crossing": "Road crossing",
+    "cyclewayonhighway_advisory": "Advisory cycle lane",
+    "cyclewayonhighway_exclusive": "Exclusive cycle lane",
+    "cyclewayonhighway_advisoryorexclusive": "Cycle lane/<br>advisory lane (fallback)",
+    "cyclewayonhighwaybetweenlanes": "Centre cycle lane<br>(\"contraflow\")",
+    "cyclewayonhighwayprotected": "Protected Bike Lane (PBL)",
+    "sharedbuslanebikewithbus": "Cycle lane with<br>bus access",
+    "sharedbuslanebuswithbike": "Bus lane<br>with cycling allowed",
+    "sharedmotorvehiclelane": "Shared traffic lane",
+    "footandcyclewaysegregated_adjoining": "Segregated foot/cycle path,<br>alongside road",
+    "footandcyclewaysegregated_isolated": "Segregated foot/cycle path,<br>standalone",
+    "footandcyclewaysegregated_adjoiningorisolated": "Segregated foot/cycle path (fallback)",
+    "footandcyclewayshared_adjoining": "Shared foot/cycle path,<br>alongside road",
+    "footandcyclewayshared_isolated": "Shared foot/cycle path,<br>standalone",
+    "footandcyclewayshared_adjoiningorisolated": "Shared foot/cycle path (fallback)",
+    "footwaybicycleyes_adjoining": "Footway, cycling allowed,<br>alongside road",
+    "footwaybicycleyes_isolated": "Footway, cycling allowed,<br>standalone",
+    "footwaybicycleyes_adjoiningorisolated": "Footway, cycling allowed<br>(fallback)",
+    "needsclarification": "Type unclear -<br>tags insufficient"
+  },
+  "github": {
+    "reportIssue": "Report a bug or give feedback"
+  },
+  "geocoder": {
+    "placeholder": "Search address...",
+    "unknownAddress": "Unknown address",
+    "noResults": "No results found"
+  },
+  "routeInfo": {
+    "turns": "turns",
+    "weight": "Weight"
+  },
+  "lang": {
+    "switcher": "Language"
+  }
+}

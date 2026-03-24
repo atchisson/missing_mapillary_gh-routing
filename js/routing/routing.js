@@ -29,6 +29,7 @@ import {
   CONTEXT_LAYER_IDS
 } from '../utils/constants.js';
 import { setCalculateRouteFunction } from './routeRecalculator.js';
+import { t } from '../i18n/i18n.js';
 
 // Flag to prevent parallel route calculations
 let routeCalculationInProgress = false;
@@ -60,6 +61,12 @@ function getUserFriendlyErrorMessage(error) {
   return message;
 }
 
+function formatTemplate(template, values = {}) {
+  return Object.entries(values).reduce((result, [key, value]) => {
+    return result.replaceAll(`{${key}}`, String(value));
+  }, template);
+}
+
 // Calculate comparison route with Weight=1 and show differences
 async function calculateComparisonWithWeightOne(map, allPoints, currentPath, currentEncodedValues, currentCoordinates, currentWeight) {
   try {
@@ -82,7 +89,7 @@ async function calculateComparisonWithWeightOne(map, allPoints, currentPath, cur
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(formatTemplate(t('errors.httpStatus'), { status: response.status }));
     }
     
     const data = await response.json();
@@ -324,7 +331,7 @@ function displayComparison(
  */
 function validateCoordinates(coord, name) {
   if (!coord) {
-    throw new Error(`${name}: Koordinaten fehlen`);
+    throw new Error(`${name}: ${t('errors.coordsMissing')}`);
   }
   
   let lng, lat;
@@ -332,26 +339,36 @@ function validateCoordinates(coord, name) {
   // Support both array format [lng, lat] and object format {lng, lat, svgId}
   if (Array.isArray(coord)) {
     if (coord.length < 2) {
-      throw new Error(`${name}: Koordinaten müssen ein Array mit mindestens 2 Werten sein`);
+      throw new Error(`${name}: ${t('errors.coordsNotArray')}`);
     }
     [lng, lat] = coord;
   } else if (coord && typeof coord === 'object') {
     lng = coord.lng;
     lat = coord.lat;
   } else {
-    throw new Error(`${name}: Koordinaten müssen ein Array [lng, lat] oder Objekt {lng, lat} sein`);
+    throw new Error(`${name}: ${t('errors.coordsInvalidFormat')}`);
   }
   
   if (typeof lng !== 'number' || typeof lat !== 'number' || isNaN(lng) || isNaN(lat)) {
-    throw new Error(`${name}: Länge und Breite müssen gültige Zahlen sein`);
+    throw new Error(`${name}: ${t('errors.coordsInvalidNumbers')}`);
   }
   
   if (lng < COORDINATE_LIMITS.MIN_LNG || lng > COORDINATE_LIMITS.MAX_LNG) {
-    throw new Error(`${name}: Länge muss zwischen ${COORDINATE_LIMITS.MIN_LNG} und ${COORDINATE_LIMITS.MAX_LNG} liegen`);
+    throw new Error(
+      `${name}: ${formatTemplate(t('errors.coordsLngRange'), {
+        min: COORDINATE_LIMITS.MIN_LNG,
+        max: COORDINATE_LIMITS.MAX_LNG
+      })}`
+    );
   }
   
   if (lat < COORDINATE_LIMITS.MIN_LAT || lat > COORDINATE_LIMITS.MAX_LAT) {
-    throw new Error(`${name}: Breite muss zwischen ${COORDINATE_LIMITS.MIN_LAT} und ${COORDINATE_LIMITS.MAX_LAT} liegen`);
+    throw new Error(
+      `${name}: ${formatTemplate(t('errors.coordsLatRange'), {
+        min: COORDINATE_LIMITS.MIN_LAT,
+        max: COORDINATE_LIMITS.MAX_LAT
+      })}`
+    );
   }
 }
 
@@ -389,7 +406,7 @@ async function fetchRouteGet(url) {
     response = await fetch(urlNoDetails);
     return response;
   } catch (error) {
-    throw new Error(`${ERROR_MESSAGES.NETWORK_ERROR}. Stelle sicher, dass GraphHopper auf ${GRAPHHOPPER_URL} läuft: ${error.message}`);
+    throw new Error(`${ERROR_MESSAGES.NETWORK_ERROR}. ${t('errors.checkGraphhopper')} (${GRAPHHOPPER_URL}): ${error.message}`);
   }
 }
 
@@ -400,7 +417,9 @@ function extractCoordinates(path) {
   } else if (path.points && path.points.geometry && path.points.geometry.coordinates) {
     return path.points.geometry.coordinates;
   }
-  throw new Error('Route points format not recognized. Response: ' + JSON.stringify(path).substring(0, 200));
+  throw new Error(
+    formatTemplate(t('errors.routePointsFormat'), { response: JSON.stringify(path).substring(0, 200) })
+  );
 }
 
 // Normalize coordinates to [lng, lat] format
@@ -627,10 +646,10 @@ export async function calculateRoute(map, start, end, waypoints = []) {
   setCalculateRouteFunction(calculateRoute);
   
   // Validate coordinates
-  validateCoordinates(start, 'Startpunkt');
-  validateCoordinates(end, 'Endpunkt');
+  validateCoordinates(start, t('routing.pointNames.start'));
+  validateCoordinates(end, t('routing.pointNames.end'));
   waypoints.forEach((wp, index) => {
-    validateCoordinates(wp, `Zwischenpunkt ${index + 1}`);
+    validateCoordinates(wp, `${t('routing.pointNames.waypoint')} ${index + 1}`);
   });
   
   // Optimize waypoint order if enabled, we have waypoints, and they weren't manually sorted
@@ -691,7 +710,7 @@ export async function calculateRoute(map, start, end, waypoints = []) {
   
   if (calculateBtn) {
     calculateBtn.disabled = true;
-    calculateBtn.textContent = 'Berechne...';
+    calculateBtn.textContent = t('routing.calculating');
   }
 
   try {
@@ -743,7 +762,7 @@ export async function calculateRoute(map, start, end, waypoints = []) {
           body: JSON.stringify(requestBody)
         });
       } catch (error) {
-        throw new Error(`${ERROR_MESSAGES.NETWORK_ERROR}. Stelle sicher, dass GraphHopper auf ${GRAPHHOPPER_URL} läuft: ${error.message}`);
+        throw new Error(`${ERROR_MESSAGES.NETWORK_ERROR}. ${t('errors.checkGraphhopper')} (${GRAPHHOPPER_URL}): ${error.message}`);
       }
     } else {
       // GET request with URL parameters
@@ -771,7 +790,9 @@ export async function calculateRoute(map, start, end, waypoints = []) {
         throw new Error('OUT_OF_BOUNDS');
       }
       
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorMessage}`);
+      throw new Error(
+        formatTemplate(t('errors.httpStatusWithMessage'), { status: response.status, message: errorMessage })
+      );
     }
     
     const data = await response.json();
@@ -789,7 +810,9 @@ export async function calculateRoute(map, start, end, waypoints = []) {
         // Nested geometry object
         coordinates = path.points.geometry.coordinates;
       } else {
-        throw new Error('Route points format not recognized. Response: ' + JSON.stringify(path).substring(0, 200));
+        throw new Error(
+          formatTemplate(t('errors.routePointsFormat'), { response: JSON.stringify(path).substring(0, 200) })
+        );
       }
       
       // Extract elevation data if available
@@ -931,7 +954,7 @@ export async function calculateRoute(map, start, end, waypoints = []) {
         setupRouting(map);
         routeSource = map.getSource(LAYER_IDS.ROUTE);
         if (!routeSource) {
-          throw new Error('Route source not found and could not be created');
+          throw new Error(t('errors.routeSourceMissing'));
         }
       }
       routeSource.setData({
@@ -1089,12 +1112,12 @@ export async function calculateRoute(map, start, end, waypoints = []) {
     displayRouteError(userFriendlyMessage, routeInfo);
     
     // Show alert with user-friendly message
-    alert(`Fehler beim Berechnen der Route: ${userFriendlyMessage}`);
+    alert(`${t('routing.calculateError')}: ${userFriendlyMessage}`);
   } finally {
     routeCalculationInProgress = false;
     if (calculateBtn) {
       calculateBtn.disabled = false;
-      calculateBtn.textContent = 'Route berechnen';
+      calculateBtn.textContent = t('routing.calculate');
     }
   }
 }

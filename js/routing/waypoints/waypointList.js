@@ -8,6 +8,7 @@ import { updateMarkers } from '../routingUI.js';
 import { updateCoordinateTooltips } from '../coordinates/coordinateTooltips.js';
 import { recalculateRouteIfReady } from '../routeRecalculator.js';
 import { removeWaypoint } from './waypointManager.js';
+import { t } from '../../i18n/i18n.js';
 
 /**
  * Create HTML template for a waypoint list item
@@ -17,8 +18,9 @@ import { removeWaypoint } from './waypointManager.js';
  */
 function createWaypointItemHTML(index, waypoint) {
   const svgPath = `svgs/${waypoint.svgId}`;
+  const waypointAlt = t('waypointMenu.alt').replace('{index}', String(index + 1));
   return `
-    <span class="waypoint-drag-handle" title="Zum Verschieben ziehen">
+    <span class="waypoint-drag-handle" title="${t('waypointMenu.dragHandle')}">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="9" cy="12" r="1"></circle>
         <circle cx="9" cy="5" r="1"></circle>
@@ -29,11 +31,11 @@ function createWaypointItemHTML(index, waypoint) {
       </svg>
     </span>
     <span class="waypoint-svg-icon">
-      <img src="${svgPath}" alt="Waypoint ${index + 1}" style="width: 20px; height: 20px; object-fit: contain;">
+      <img src="${svgPath}" alt="${waypointAlt}" style="width: 20px; height: 20px; object-fit: contain;">
     </span>
     <span class="waypoint-number">${index + 1}</span>
     <span class="waypoint-coords">${waypoint.lat.toFixed(3)}, ${waypoint.lng.toFixed(3)}</span>
-    <button class="btn-remove-waypoint" data-index="${index}" title="Zwischenpunkt entfernen">
+    <button class="btn-remove-waypoint" data-index="${index}" title="${t('waypointMenu.removeWaypoint')}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>

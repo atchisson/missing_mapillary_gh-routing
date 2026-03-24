@@ -4,6 +4,7 @@ import { routeState } from '../routeState.js';
 import { HEIGHTGRAPH_CONFIG } from './heightgraphConfig.js';
 import { calculateCumulativeDistances } from './heightgraphUtils.js';
 import { getBicycleInfraDescription } from '../colorSchemes.js';
+import { t } from '../../i18n/i18n.js';
 
 // Store event handlers to prevent duplicate listeners
 let heightgraphMouseMoveHandler = null;
@@ -227,10 +228,10 @@ export function setupHeightgraphInteractivity(canvas, elevations, totalDistance,
       const distance = segmentMidDistance;
       
       // Build tooltip content
-      let tooltipContent = `Distanz: ${(distance / 1000).toFixed(2)} km<br>`;
+      let tooltipContent = `${t('heightgraph.tooltip.distance')}: ${(distance / 1000).toFixed(2)} km<br>`;
       
       if (elevation !== null && elevation !== undefined) {
-        tooltipContent += `Höhe: ${Math.round(elevation)} m<br>`;
+        tooltipContent += `${t('heightgraph.tooltip.elevation')}: ${Math.round(elevation)} m<br>`;
       }
       
       // Add encoded value
@@ -238,23 +239,23 @@ export function setupHeightgraphInteractivity(canvas, elevations, totalDistance,
           encodedValues.mapillary_coverage[dataIndex] !== null) {
         const customValue = encodedValues.mapillary_coverage[dataIndex];
         const customPresentText = typeof customValue === 'boolean' 
-          ? (customValue ? 'Ja' : 'Nein') 
+          ? (customValue ? t('heightgraph.tooltip.yes') : t('heightgraph.tooltip.no')) 
           : String(customValue);
-        tooltipContent += `Mapillary Coverage: ${customPresentText}`;
+        tooltipContent += `${t('heightgraph.mapillaryCoverage')}: ${customPresentText}`;
       } else if (selectedType === 'surface' && encodedValues.surface && encodedValues.surface[dataIndex] !== undefined && 
                  encodedValues.surface[dataIndex] !== null) {
-        tooltipContent += `Surface: ${String(encodedValues.surface[dataIndex])}`;
+        tooltipContent += `${t('heightgraph.surface')}: ${String(encodedValues.surface[dataIndex])}`;
       } else if (selectedType === 'road_class' && encodedValues.road_class && encodedValues.road_class[dataIndex] !== undefined && 
                  encodedValues.road_class[dataIndex] !== null) {
-        tooltipContent += `Road Class: ${String(encodedValues.road_class[dataIndex])}`;
+        tooltipContent += `${t('heightgraph.roadClass')}: ${String(encodedValues.road_class[dataIndex])}`;
       } else if (selectedType === 'bicycle_infra' && encodedValues.bicycle_infra && encodedValues.bicycle_infra[dataIndex] !== undefined && 
                  encodedValues.bicycle_infra[dataIndex] !== null) {
         const bicycleInfraValue = encodedValues.bicycle_infra[dataIndex];
         const description = getBicycleInfraDescription(bicycleInfraValue);
         if (description) {
-          tooltipContent += `Bicycle Infrastructure: ${description.replace(/<br>/g, ' ')}`;
+          tooltipContent += `${t('heightgraph.bicycleInfra')}: ${description.replace(/<br>/g, ' ')}`;
         } else {
-          tooltipContent += `Bicycle Infrastructure: ${String(bicycleInfraValue).replace(/_/g, ' ')}`;
+          tooltipContent += `${t('heightgraph.bicycleInfra')}: ${String(bicycleInfraValue).replace(/_/g, ' ')}`;
         }
       }
       

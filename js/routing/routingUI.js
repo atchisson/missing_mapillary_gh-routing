@@ -17,6 +17,7 @@ import {
 } from './customModel.js';
 import { setupRoutingInputGeocoder, reverseGeocode } from '../utils/geocoder.js';
 import { ERROR_MESSAGES, MAPILLARY_SLIDER_VALUES } from '../utils/constants.js';
+import { t } from '../i18n/i18n.js';
 import { recalculateRouteIfReady } from './routeRecalculator.js';
 import { isRouteCalculationInProgress } from './routing.js';
 import { createStartMarker, createEndMarker, createWaypointMarker } from './markers/markerFactory.js';
@@ -255,12 +256,12 @@ export function setupUIHandlers(map) {
           // Expand panel
           panel.classList.remove('collapsed');
           collapseBtn.classList.remove('collapsed');
-          collapseBtn.title = 'Einklappen';
+          collapseBtn.title = t('routing.collapsePanel');
         } else {
           // Collapse panel
           panel.classList.add('collapsed');
           collapseBtn.classList.add('collapsed');
-          collapseBtn.title = 'Ausklappen';
+          collapseBtn.title = t('routing.expandPanel');
         }
         
         // Trigger panel positioning update
@@ -344,11 +345,11 @@ export function setupUIHandlers(map) {
         if (isHidden) {
           // Show eye-off icon (hidden)
           svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-          hideBtn.title = 'Einblenden';
+          hideBtn.title = t('routing.show');
         } else {
           // Show eye icon (visible)
           svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-          hideBtn.title = 'Ausblenden';
+          hideBtn.title = t('routing.hide');
         }
       }
     });
@@ -373,7 +374,7 @@ export function setupUIHandlers(map) {
           if (svg) {
             // Reset to eye icon (visible)
             svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-            hideBtn.title = 'Ausblenden';
+            hideBtn.title = t('routing.hide');
           }
         }
       });

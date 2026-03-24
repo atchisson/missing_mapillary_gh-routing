@@ -23,6 +23,9 @@ config.js
 # But keep JSON files in the project root (main) folder
 !/*.json
 
+# Keep i18n translation files
+!/js/i18n/*.json
+
 #also exclude JSON files in the icons folder
 # !/icons/*.json
 
