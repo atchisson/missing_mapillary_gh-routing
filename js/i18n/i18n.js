@@ -55,11 +55,23 @@ export function t(key) {
  * Switch language, reload translations, and re-render the DOM.
  */
 export async function setLang(lang) {
-  if (!SUPPORTED_LANGS.has(lang)) return;
+  if (!SUPPORTED_LANGS.has(lang)) {
+    console.warn('[i18n] Unsupported language:', lang);
+    return;
+  }
+  console.debug('[i18n] setLang:', lang);
   localStorage.setItem('lang', lang);
   currentLang = lang;
   await loadTranslations(lang);
   document.documentElement.lang = lang;
+  applyTranslations();
+  _updateSwitcherUI();
+}
+
+// Provide explicit helper to force full translation refresh
+export async function refreshLanguage() {
+  console.debug('[i18n] refreshLanguage:', currentLang);
+  await loadTranslations(currentLang);
   applyTranslations();
   _updateSwitcherUI();
 }

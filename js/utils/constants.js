@@ -1,10 +1,10 @@
 // Constants used throughout the application
 
 import { t } from '../i18n/i18n.js';
+import { envConfig } from '../config/envConfig.js';
 
-export const GRAPHHOPPER_URL = 'https://ghroute.vizsim.de';
-//export const GRAPHHOPPER_URL = 'https://ghroute.duckdns.org';
-// const GRAPHHOPPER_URL = 'http://localhost:8989'; // For local development
+// GraphHopper URL - loaded from .env or default fallback
+export const GRAPHHOPPER_URL = envConfig.GRAPHHOPPER_URL || 'https://ghroute.vizsim.de';
 
 // Error messages — dynamic getters so they reflect the current language at call time
 export const ERROR_MESSAGES = {
@@ -24,13 +24,10 @@ export const ROUTE_CALCULATION = {
   MAX_RETRIES: 50
 };
 
-// Mapillary slider values
-export const MAPILLARY_SLIDER_VALUES = [0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0];
-
 // Default values
 export const DEFAULTS = {
   PROFILE: 'bike_customizable',
-  ENCODED_TYPE: 'mapillary_coverage',
+  ENCODED_TYPE: 'photo_coverage',
   MAPILLARY_WEIGHT: 1.0
 };
 
@@ -71,9 +68,6 @@ export const UI_IDS = {
   EXPORT_GPX_BTN: 'export-gpx',
   ROUTE_INFO: 'route-info',
   HEIGHTGRAPH_CONTAINER: 'heightgraph-container',
-  MAPILLARY_SLIDER: 'mapillary-priority-slider',
-  SLIDER_VALUE: 'slider-value',
-  COMPARISON_CONTAINER: 'mapillary-weight-comparison',
   ENCODED_SELECT: 'heightgraph-encoded-select'
 };
 
@@ -89,22 +83,4 @@ export const LAYER_IDS = {
   TERRAIN: 'terrain'
 };
 
-// Context layer IDs
-export const CONTEXT_LAYER_IDS = [
-  'bike-lanes-needsClarification',
-  'bike-lanes-gehweg',
-  'bike-lanes-kfz',
-  'bike-lanes-fussverkehr',
-  'bike-lanes-eigenstaendig',
-  'bike-lanes-baulich',
-  'missing-streets-missing-pathclasses',
-  'missing-streets-missing-roads',
-  'missing-streets-missing-bikelanes',
-  'missing-streets-regular-pathclasses',
-  'missing-streets-regular-roads',
-  'missing-streets-regular-bikelanes',
-  'missing-streets-pano-pathclasses',
-  'missing-streets-pano-roads',
-  'missing-streets-pano-bikelanes'
-];
 

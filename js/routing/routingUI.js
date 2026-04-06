@@ -1,22 +1,14 @@
 // Routing UI handlers: buttons, inputs, markers, geocoding
 
 import { routeState } from './routeState.js';
-import { updateRouteColorByProfile } from './routeVisualization.js';
 import { exportRouteToGPX } from './gpxExport.js';
 import {
-  supportsCustomModel,
   ensureCustomModel,
-  getMapillaryPriority,
-  updateMapillaryPriority,
-  updateCarAccessRule,
-  getCarAccessRule,
-  updateUnpavedRoadsRule,
-  getUnpavedRoadsRule,
-  updateAvoidPushingRule,
-  getAvoidPushingRule
+  updatePhotoCoverageRule,
+  updatePhotoCoverageOnly360Rule,
 } from './customModel.js';
 import { setupRoutingInputGeocoder, reverseGeocode } from '../utils/geocoder.js';
-import { ERROR_MESSAGES, MAPILLARY_SLIDER_VALUES } from '../utils/constants.js';
+import { ERROR_MESSAGES } from '../utils/constants.js';
 import { t } from '../i18n/i18n.js';
 import { recalculateRouteIfReady } from './routeRecalculator.js';
 import { isRouteCalculationInProgress } from './routing.js';
@@ -67,7 +59,51 @@ export function getRandomWaypointSvg() {
   // All SVGs are in use, allow duplicates
   return WAYPOINT_SVGS[Math.floor(Math.random() * WAYPOINT_SVGS.length)];
 }
+// Smooth exponential mapping: s=0 → weak (0.5 / 0.25), s=100 → strong (0.01 / 0.005)
+function getPhotoCoverageMultipliers() {
+  const t = Math.max(0, Math.min(100, routeState.photoCoverageStrength || 50)) / 100;
+  return {
+    photo:    0.5  * Math.pow(0.02, t),  // 0.5 at t=0, ~0.07 at t=0.5, 0.01 at t=1
+    photo360: 0.5  * Math.pow(0.02, t)    // 0.5 at t=0, ~0.07 at t=0.5, 0.01 at t=1
+  };
+}
 
+function applyPhotoCoverageSettings() {
+  if (!routeState.customModel) return;
+  const { photo, photo360 } = getPhotoCoverageMultipliers();
+
+  routeState.customModel = updatePhotoCoverageRule(
+    routeState.customModel,
+    routeState.avoidPhotoCoverage,
+    photo
+  );
+
+  routeState.customModel = updatePhotoCoverageOnly360Rule(
+    routeState.customModel,
+    routeState.avoidPhotoCoverageOnly360,
+    photo360
+  );
+}
+
+function updateStrengthRowVisibility() {
+  const row = document.getElementById('photo-coverage-strength-row');
+  if (!row) return;
+  const anyChecked = routeState.avoidPhotoCoverage || routeState.avoidPhotoCoverageOnly360;
+  row.style.display = anyChecked ? 'flex' : 'none';
+}
+
+// Show/hide Panoramax map layers to match checkbox state.
+// avoid-photo-coverage   → flat sequences (blue)
+// avoid-photo-coverage-360 → 360 sequences (orange)
+function syncPanoramaxLayers() {
+  const map = window.map;
+  if (!map) return;
+  const setVis = (id, visible) => {
+    if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none');
+  };
+  setVis('panoramax-sequences-flat', routeState.avoidPhotoCoverage);
+  setVis('panoramax-sequences-360', routeState.avoidPhotoCoverageOnly360);
+}
 export function setupUIHandlers(map) {
   const startBtn = document.getElementById('set-start');
   const endBtn = document.getElementById('set-end');
@@ -77,174 +113,6 @@ export function setupUIHandlers(map) {
   const endInput = document.getElementById('end-input');
   const collapseBtn = document.getElementById('collapse-routing-panel');
   
-  // Profile selection handlers
-  document.querySelectorAll('.profile-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Remove active class from all buttons
-      document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('active'));
-      // Add active class to clicked button
-      btn.classList.add('active');
-      // Store current mapillary_weight before switching profiles
-      const previousProfile = routeState.selectedProfile;
-      const previousMapillaryWeight = supportsCustomModel(previousProfile) && routeState.customModel
-        ? getMapillaryPriority(routeState.customModel)
-        : null;
-      
-      // Update selected profile
-      routeState.selectedProfile = btn.dataset.profile;
-      
-      // Reset and set default custom model if customizable profile is selected
-      if (supportsCustomModel(routeState.selectedProfile)) {
-        // If switching between customizable profiles, preserve mapillary_weight
-        if (supportsCustomModel(previousProfile) && previousMapillaryWeight !== null) {
-          // Initialize with default model first
-          routeState.customModel = ensureCustomModel(null, routeState.selectedProfile);
-          // Then restore the mapillary_weight value
-          routeState.customModel = updateMapillaryPriority(routeState.customModel, previousMapillaryWeight);
-        } else {
-          // Switching from non-customizable profile or no previous weight, use default
-          routeState.customModel = null;
-          routeState.customModel = ensureCustomModel(routeState.customModel, routeState.selectedProfile);
-        }
-        
-        // Update car access rule for car_customizable profile
-        if (routeState.selectedProfile === 'car_customizable' && routeState.customModel) {
-          routeState.customModel = updateCarAccessRule(
-            routeState.customModel,
-            routeState.allowCarAccess
-          );
-          // Update unpaved roads rule
-          routeState.customModel = updateUnpavedRoadsRule(
-            routeState.customModel,
-            routeState.avoidUnpavedRoads
-          );
-        }
-        
-        // Update avoid pushing rule for bike_customizable profile
-        if (routeState.selectedProfile === 'bike_customizable' && routeState.customModel) {
-          routeState.customModel = updateAvoidPushingRule(
-            routeState.customModel,
-            routeState.avoidPushing
-          );
-        }
-      } else {
-        // Clear custom model if switching to non-customizable profile
-        routeState.customModel = null;
-      }
-      
-      // Show/hide customizable slider
-      const sliderContainer = document.getElementById('customizable-slider-container');
-      if (sliderContainer) {
-        if (supportsCustomModel(routeState.selectedProfile)) {
-          sliderContainer.style.display = 'block';
-          // Initialize slider value from customModel
-          const multiplyBy = getMapillaryPriority(routeState.customModel);
-          if (multiplyBy !== null && multiplyBy !== undefined) {
-            // Use the exported function if available, otherwise set directly
-            if (window.setMapillarySliderValue) {
-              window.setMapillarySliderValue(multiplyBy);
-            } else {
-              const slider = document.getElementById('mapillary-priority-slider');
-              const sliderValue = document.getElementById('slider-value');
-              if (slider) {
-                // Find closest predefined value for slider position
-                const sliderValues = MAPILLARY_SLIDER_VALUES;
-                let closestIndex = 0;
-                let minDiff = Math.abs(multiplyBy - sliderValues[0]);
-                for (let i = 1; i < sliderValues.length; i++) {
-                  const diff = Math.abs(multiplyBy - sliderValues[i]);
-                  if (diff < minDiff) {
-                    minDiff = diff;
-                    closestIndex = i;
-                  }
-                }
-                slider.value = closestIndex;
-                if (sliderValue) {
-                  // Display the actual value (even if not in predefined list)
-                  const inverseValue = (1 / multiplyBy).toFixed(0);
-                  sliderValue.textContent = `${multiplyBy.toFixed(2)} (×${inverseValue})`;
-                }
-              }
-            }
-          }
-        } else {
-          sliderContainer.style.display = 'none';
-        }
-      }
-      
-      // Show/hide car access switch (only for car_customizable)
-      const carAccessContainer = document.getElementById('car-access-container');
-      if (carAccessContainer) {
-        if (routeState.selectedProfile === 'car_customizable') {
-          carAccessContainer.style.display = 'block';
-          // Initialize switch from routeState
-          const switchInput = document.getElementById('allow-car-access');
-          if (switchInput) {
-            switchInput.checked = routeState.allowCarAccess;
-            // Update custom model based on switch state
-            if (routeState.customModel) {
-              routeState.customModel = updateCarAccessRule(
-                routeState.customModel,
-                routeState.allowCarAccess
-              );
-            }
-          }
-        } else {
-          carAccessContainer.style.display = 'none';
-        }
-      }
-      
-      // Show/hide unpaved roads switch (only for car_customizable)
-      const unpavedRoadsContainer = document.getElementById('unpaved-roads-container');
-      if (unpavedRoadsContainer) {
-        if (routeState.selectedProfile === 'car_customizable') {
-          unpavedRoadsContainer.style.display = 'block';
-          // Initialize switch from routeState
-          const switchInput = document.getElementById('avoid-unpaved-roads');
-          if (switchInput) {
-            switchInput.checked = routeState.avoidUnpavedRoads;
-            // Update custom model based on switch state
-            if (routeState.customModel) {
-              routeState.customModel = updateUnpavedRoadsRule(
-                routeState.customModel,
-                routeState.avoidUnpavedRoads
-              );
-            }
-          }
-        } else {
-          unpavedRoadsContainer.style.display = 'none';
-        }
-      }
-      
-      // Show/hide avoid pushing switch (only for bike_customizable)
-      const avoidPushingContainer = document.getElementById('avoid-pushing-container');
-      if (avoidPushingContainer) {
-        if (routeState.selectedProfile === 'bike_customizable') {
-          avoidPushingContainer.style.display = 'block';
-          // Initialize switch from routeState
-          const switchInput = document.getElementById('avoid-pushing');
-          if (switchInput) {
-            switchInput.checked = routeState.avoidPushing;
-            // Update custom model based on switch state
-            if (routeState.customModel) {
-              routeState.customModel = updateAvoidPushingRule(
-                routeState.customModel,
-                routeState.avoidPushing
-              );
-            }
-          }
-        } else {
-          avoidPushingContainer.style.display = 'none';
-        }
-      }
-      
-      // Update route color based on profile
-      updateRouteColorByProfile(map, routeState.selectedProfile);
-      
-      // If route already exists, recalculate with new profile
-      recalculateRouteIfReady();
-    });
-  });
   
   // Collapse/expand panel handler
   if (collapseBtn) {
@@ -399,263 +267,64 @@ export function setupUIHandlers(map) {
     });
   }
   
-  // Mapillary priority slider for car_customizable and bike_customizable profiles
-  const mapillarySlider = document.getElementById('mapillary-priority-slider');
-  const sliderValueDisplay = document.getElementById('slider-value');
-  
-  // Use predefined slider values from constants
-  const sliderValues = MAPILLARY_SLIDER_VALUES;
-  
-  // Helper functions to convert between slider index (0-10) and actual value
-  const sliderIndexToValue = (index) => {
-    const maxIndex = sliderValues.length - 1;
-    const clampedIndex = Math.max(0, Math.min(maxIndex, Math.round(index)));
-    return sliderValues[clampedIndex];
-  };
-  
-  const valueToSliderIndex = (value) => {
-    // Find closest predefined value and return its index
-    let closestIndex = 0;
-    let minDiff = Math.abs(value - sliderValues[0]);
-    for (let i = 1; i < sliderValues.length; i++) {
-      const diff = Math.abs(value - sliderValues[i]);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = i;
-      }
-    }
-    return closestIndex;
-  };
-  
-  // Store the actual value from URL (may not be in predefined list)
-  let currentActualValue = null;
-  
-  // Export function to set slider value from external code (e.g., URL loading)
-  // This function is available globally and can be called even before event listeners are set up
-  window.setMapillarySliderValue = (value) => {
-    const slider = document.getElementById('mapillary-priority-slider');
-    const sliderValue = document.getElementById('slider-value');
-    if (slider) {
-      // Store the actual value (even if not in predefined list)
-      currentActualValue = value;
-      
-      // Find closest predefined value for slider position
-      const closestIndex = valueToSliderIndex(value);
-      slider.value = closestIndex;
-      
-      // Display the actual value (not the closest predefined one)
-      if (sliderValue) {
-        const inverseValue = (1 / value).toFixed(0);
-        sliderValue.textContent = `${value.toFixed(2)} (×${inverseValue})`;
-      }
-    }
-  };
-  
-  if (mapillarySlider) {
-    
-    let sliderTimeout = null;
-    let sliderMaxTimeout = null;
-    let sliderStartTime = null;
-    let pendingRecalculation = false;
-    let isUserDragging = false;
-    
-    let retryInterval = null;
-    
-    const triggerRouteRecalculation = async () => {
-      if (!pendingRecalculation || !routeState.startPoint || !routeState.endPoint) {
-        return;
-      }
-      
-      // Prevent multiple simultaneous calls
-      if (retryInterval) {
-        return; // Already trying to calculate
-      }
-      
-      // Check if a calculation is already in progress
-      if (isRouteCalculationInProgress()) {
-        // Wait a bit and try again
-        setTimeout(() => {
-          if (pendingRecalculation && !isRouteCalculationInProgress()) {
-            triggerRouteRecalculation();
-          }
-        }, 100);
-        return;
-      }
-      
-      // Clear all timeouts since we're about to calculate
-      if (sliderTimeout) {
-        clearTimeout(sliderTimeout);
-        sliderTimeout = null;
-      }
-      if (sliderMaxTimeout) {
-        clearTimeout(sliderMaxTimeout);
-        sliderMaxTimeout = null;
-      }
-      
-      // Reset pending flag immediately to prevent duplicate calls
-      pendingRecalculation = false;
-      
-      // Try to calculate route (include waypoints)
-      recalculateRouteIfReady();
-      
-      // Reset slider start time
-      sliderStartTime = null;
-    };
-    
-    // Track when user starts dragging
-    mapillarySlider.addEventListener('mousedown', () => {
-      isUserDragging = true;
-    });
-    
-    mapillarySlider.addEventListener('touchstart', () => {
-      isUserDragging = true;
-    });
-    
-    mapillarySlider.addEventListener('input', (e) => {
-      const sliderIndex = parseInt(e.target.value);
-      // Always use the predefined value when user drags the slider
-      const actualValue = sliderIndexToValue(sliderIndex);
-      
-      // Clear the stored actual value from URL since user is now controlling
-      currentActualValue = null;
-      
-      if (sliderValueDisplay) {
-        // Show inverse value to make it more intuitive (smaller multiply_by = higher priority)
-        const inverseValue = (1 / actualValue).toFixed(0);
-        sliderValueDisplay.textContent = `${actualValue.toFixed(2)} (×${inverseValue})`;
-      }
-      
-      // Update customModel if customizable profile is selected
-      if (supportsCustomModel(routeState.selectedProfile) && routeState.customModel) {
-        updateMapillaryPriority(routeState.customModel, actualValue);
-        pendingRecalculation = true;
-        
-        // Track when slider movement started
-        if (!sliderStartTime) {
-          sliderStartTime = Date.now();
-        }
-        
-        // Clear existing debounce timeout
-        if (sliderTimeout) {
-          clearTimeout(sliderTimeout);
-        }
-        
-        // Debounce: wait 300ms after last change before recalculating
-        sliderTimeout = setTimeout(() => {
-          triggerRouteRecalculation();
-          sliderTimeout = null;
-        }, 300);
-        
-        // Maximum timeout: ensure recalculation happens after 1 second from first change
-        // Only set if not already set (to prevent multiple timeouts)
-        if (!sliderMaxTimeout) {
-          sliderMaxTimeout = setTimeout(() => {
-            // Only trigger if pendingRecalculation is still true (sliderTimeout hasn't fired yet)
-            if (pendingRecalculation) {
-              triggerRouteRecalculation();
-            }
-            sliderMaxTimeout = null;
-          }, 1000);
-        }
-      }
-    });
-    
-    // Track when user stops dragging
-    mapillarySlider.addEventListener('mouseup', () => {
-      isUserDragging = false;
-    });
-    
-    mapillarySlider.addEventListener('touchend', () => {
-      isUserDragging = false;
-    });
-  }
-  
-  // Car access switch handler (for car_customizable profile only)
-  const carAccessSwitch = document.getElementById('allow-car-access');
-  if (carAccessSwitch) {
-    carAccessSwitch.addEventListener('change', (e) => {
-      if (routeState.selectedProfile !== 'car_customizable') {
-        return;
-      }
-      
-      const allowCarAccess = e.target.checked;
-      routeState.allowCarAccess = allowCarAccess;
-      
-      // Update custom model
-      if (routeState.customModel) {
-        routeState.customModel = updateCarAccessRule(
-          routeState.customModel,
-          allowCarAccess
-        );
-      }
-      
-      // Recalculate route if ready
-      recalculateRouteIfReady();
-    });
-  }
-  
-  // Unpaved roads switch handler (for car_customizable profile only)
-  const unpavedRoadsSwitch = document.getElementById('avoid-unpaved-roads');
-  if (unpavedRoadsSwitch) {
-    unpavedRoadsSwitch.addEventListener('change', (e) => {
-      if (routeState.selectedProfile !== 'car_customizable') {
-        return;
-      }
-      
-      const avoidUnpavedRoads = e.target.checked;
-      routeState.avoidUnpavedRoads = avoidUnpavedRoads;
-      
-      // Update custom model
-      if (routeState.customModel) {
-        routeState.customModel = updateUnpavedRoadsRule(
-          routeState.customModel,
-          avoidUnpavedRoads
-        );
-      }
-      
-      // Recalculate route if ready
-      recalculateRouteIfReady();
-    });
-  }
-  
-  // Avoid pushing switch handler (for bike_customizable profile only)
-  const avoidPushingSwitch = document.getElementById('avoid-pushing');
-  if (avoidPushingSwitch) {
-    avoidPushingSwitch.addEventListener('change', (e) => {
-      if (routeState.selectedProfile !== 'bike_customizable') {
-        return;
-      }
-      
-      const avoidPushing = e.target.checked;
-      routeState.avoidPushing = avoidPushing;
-      
-      // Ensure custom model exists and preserve mapillary weight
+  // Photo coverage switch handler (Panoramax fork)
+  const avoidPhotoCoverageSwitch = document.getElementById('avoid-photo-coverage');
+  if (avoidPhotoCoverageSwitch) {
+    avoidPhotoCoverageSwitch.addEventListener('change', (e) => {
+      routeState.avoidPhotoCoverage = e.target.checked;
       if (!routeState.customModel) {
         routeState.customModel = ensureCustomModel(null, routeState.selectedProfile);
       }
-      
-      // Preserve current mapillary weight before updating
-      const currentMapillaryWeight = getMapillaryPriority(routeState.customModel);
-      
-      // Update custom model
-      routeState.customModel = updateAvoidPushingRule(
-        routeState.customModel,
-        avoidPushing
-      );
-      
-      // Restore mapillary weight if it was set
-      if (currentMapillaryWeight !== null && currentMapillaryWeight !== undefined) {
-        routeState.customModel = updateMapillaryPriority(
-          routeState.customModel,
-          currentMapillaryWeight
-        );
-      }
-      
-      // Recalculate route if ready
+      applyPhotoCoverageSettings();
+      updateStrengthRowVisibility();
+      syncPanoramaxLayers();
       recalculateRouteIfReady();
     });
   }
-  
+
+  const avoidPhotoCoverage360Switch = document.getElementById('avoid-photo-coverage-360');
+  if (avoidPhotoCoverage360Switch) {
+    avoidPhotoCoverage360Switch.addEventListener('change', (e) => {
+      routeState.avoidPhotoCoverageOnly360 = e.target.checked;
+      if (!routeState.customModel) {
+        routeState.customModel = ensureCustomModel(null, routeState.selectedProfile);
+      }
+      applyPhotoCoverageSettings();
+      updateStrengthRowVisibility();
+      syncPanoramaxLayers();
+      recalculateRouteIfReady();
+    });
+  }
+
+  const strengthSlider = document.getElementById('photo-coverage-strength');
+  if (strengthSlider) {
+    strengthSlider.value = routeState.photoCoverageStrength ?? 50;
+    strengthSlider.addEventListener('input', (e) => {
+      routeState.photoCoverageStrength = parseFloat(e.target.value);
+      if (routeState.customModel) {
+        applyPhotoCoverageSettings();
+        recalculateRouteIfReady();
+      }
+    });
+  }
+
+  // Profile selector buttons (bike_customizable / car_customizable / foot)
+  document.querySelectorAll('.profile-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const profile = btn.dataset.profile;
+      if (profile === routeState.selectedProfile) return;
+
+      routeState.selectedProfile = profile;
+      routeState.customModel = ensureCustomModel(null, profile);
+
+      // Update active state
+      document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      recalculateRouteIfReady();
+    });
+  });
+
   // Add waypoint button handler
   // Helper function to handle add waypoint button click
   const handleAddWaypointClick = () => {

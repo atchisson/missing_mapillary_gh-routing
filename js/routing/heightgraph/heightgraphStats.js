@@ -2,8 +2,8 @@
 
 import { routeState } from '../routeState.js';
 import { calculateDistance } from './heightgraphUtils.js';
-import { getSurfaceColorForStats, getRoadClassColorForStats, getBicycleInfraColorForStats } from './heightgraphDrawing.js';
-import { getBicycleInfraDescription, getColorForEncodedValue } from '../colorSchemes.js';
+import { getSurfaceColorForStats, getRoadClassColorForStats } from './heightgraphDrawing.js';
+import { getColorForEncodedValue } from '../colorSchemes.js';
 import { t } from '../../i18n/i18n.js';
 
 /**
@@ -72,16 +72,8 @@ export function updateHeightgraphStats(encodedType, encodedValues) {
       backgroundColor = getSurfaceColorForStats(key);
     } else if (encodedType === 'road_class') {
       backgroundColor = getRoadClassColorForStats(key);
-    } else if (encodedType === 'bicycle_infra') {
-      backgroundColor = getBicycleInfraColorForStats(key);
-      const description = getBicycleInfraDescription(key);
-      if (description) {
-        displayKey = description;
-      } else {
-        displayKey = displayKey.replace(/_/g, '<br>_');
-      }
     }
-    
+
     // Add data attributes for hover functionality
     const encodedKey = encodeURIComponent(key);
     statsHTML += `<div class="heightgraph-stat-item" 

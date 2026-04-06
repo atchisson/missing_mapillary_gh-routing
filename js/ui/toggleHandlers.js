@@ -3,17 +3,6 @@
 import { routeState } from '../routing/routeState.js';
 import { switchMapTheme } from './mapThemeSwitcher.js';
 
-let updateContextLayersOpacity = null;
-
-// Dynamically import the function to avoid circular dependencies
-async function getUpdateContextLayersOpacity() {
-  if (!updateContextLayersOpacity) {
-    const routingModule = await import('../routing/routing.js');
-    updateContextLayersOpacity = routingModule.updateContextLayersOpacity;
-  }
-  return updateContextLayersOpacity;
-}
-
 // Initialize dark mode early (before DOMContentLoaded)
 function initDarkMode() {
   // Check for manual override first
@@ -64,6 +53,7 @@ export function setupToggleHandlers() {
     }
     
     darkModeToggle.addEventListener('click', () => {
+      console.debug('[UI] dark mode toggle clicked');
       const html = document.documentElement;
       const currentTheme = html.getAttribute('data-theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -196,6 +186,7 @@ export function setupToggleHandlers() {
     });
   }
 
+
   // Map Settings Menu Toggle
   const mapSettingsToggle = document.getElementById('map-settings-toggle');
   const mapSettingsPanel = document.getElementById('map-settings-panel');
@@ -203,6 +194,7 @@ export function setupToggleHandlers() {
   
   if (mapSettingsToggle && mapSettingsPanel && mapSettingsMenu) {
     mapSettingsToggle.addEventListener('click', (e) => {
+      console.debug('[UI] map settings toggle clicked');
       e.stopPropagation();
       mapSettingsPanel.classList.toggle('hidden');
     });
@@ -213,127 +205,9 @@ export function setupToggleHandlers() {
         mapSettingsPanel.classList.add('hidden');
       }
     });
+  } else {
+    console.warn('[UI] map settings elements missing:', { mapSettingsToggle, mapSettingsPanel, mapSettingsMenu });
   }
 
-  // Bike lanes toggle
-  const toggleBikelanes = document.getElementById('toggle-bikelanes');
-  const bikelanesLegend = document.getElementById('bikelanes-legend');
-  const toggleBikelanesSegment = document.getElementById('toggle-bikelanes-segment');
-  const bikelanesSegmentContent = document.getElementById('bikelanes-segment-content');
-
-  if (toggleBikelanes) {
-    toggleBikelanes.addEventListener('change', (e) => {
-      if (window.map) {
-        const visibility = e.target.checked ? 'visible' : 'none';
-        const layers = [
-          'bike-lanes-needsClarification',
-          'bike-lanes-gehweg',
-          'bike-lanes-kfz',
-          'bike-lanes-fussverkehr',
-          'bike-lanes-eigenstaendig',
-          'bike-lanes-baulich'
-        ];
-        
-        layers.forEach(layerId => {
-          if (window.map.getLayer(layerId)) {
-            window.map.setLayoutProperty(layerId, 'visibility', visibility);
-          }
-        });
-
-        // Update context layers opacity based on route visibility
-        getUpdateContextLayersOpacity().then(updateFn => {
-          if (updateFn && window.map) {
-            const hasRoute = routeState.currentRouteData !== null;
-            updateFn(window.map, hasRoute);
-          }
-        });
-
-        // Show/hide legend and content
-        if (bikelanesLegend) {
-          bikelanesLegend.style.display = e.target.checked ? 'flex' : 'none';
-        }
-        // Auto-expand when enabled, auto-collapse when disabled
-        if (bikelanesSegmentContent) {
-          if (e.target.checked) {
-            bikelanesSegmentContent.classList.remove('collapsed');
-          } else {
-            bikelanesSegmentContent.classList.add('collapsed');
-          }
-        }
-      }
-    });
-  }
-
-  // Toggle bike lanes segment (click on header to expand/collapse)
-  if (toggleBikelanesSegment && bikelanesSegmentContent) {
-    toggleBikelanesSegment.addEventListener('click', (e) => {
-      // Don't toggle if clicking on the switch itself
-      if (e.target.closest('.switch-toggle')) {
-        return;
-      }
-      const isCollapsed = bikelanesSegmentContent.classList.contains('collapsed');
-      bikelanesSegmentContent.classList.toggle('collapsed');
-    });
-  }
-
-  // Missing streets toggle
-  const toggleMissingStreets = document.getElementById('toggle-missing-streets');
-  const missingStreetsLegend = document.getElementById('missing-streets-legend');
-  const toggleMissingStreetsSegment = document.getElementById('toggle-missing-streets-segment');
-  const missingStreetsSegmentContent = document.getElementById('missing-streets-segment-content');
-
-  if (toggleMissingStreets) {
-    toggleMissingStreets.addEventListener('change', (e) => {
-      if (window.map) {
-        const visibility = e.target.checked ? 'visible' : 'none';
-        const layers = [
-          'missing-streets-missing-pathclasses',
-          'missing-streets-missing-roads',
-          'missing-streets-missing-bikelanes',
-          'missing-streets-regular-pathclasses',
-          'missing-streets-regular-roads',
-          'missing-streets-regular-bikelanes',
-          'missing-streets-pano-pathclasses',
-          'missing-streets-pano-roads',
-          'missing-streets-pano-bikelanes'
-        ];
-        
-        layers.forEach(layerId => {
-          if (window.map.getLayer(layerId)) {
-            window.map.setLayoutProperty(layerId, 'visibility', visibility);
-          }
-        });
-
-        // Update context layers opacity based on route visibility
-        getUpdateContextLayersOpacity().then(updateFn => {
-          if (updateFn && window.map) {
-            const hasRoute = routeState.currentRouteData !== null;
-            updateFn(window.map, hasRoute);
-          }
-        });
-
-        // Auto-expand when enabled, auto-collapse when disabled
-        if (missingStreetsSegmentContent) {
-          if (e.target.checked) {
-            missingStreetsSegmentContent.classList.remove('collapsed');
-          } else {
-            missingStreetsSegmentContent.classList.add('collapsed');
-          }
-        }
-      }
-    });
-  }
-
-  // Toggle missing streets segment (click on header to expand/collapse)
-  if (toggleMissingStreetsSegment && missingStreetsSegmentContent) {
-    toggleMissingStreetsSegment.addEventListener('click', (e) => {
-      // Don't toggle if clicking on the switch itself
-      if (e.target.closest('.switch-toggle')) {
-        return;
-      }
-      const isCollapsed = missingStreetsSegmentContent.classList.contains('collapsed');
-      missingStreetsSegmentContent.classList.toggle('collapsed');
-    });
-  }
 }
 

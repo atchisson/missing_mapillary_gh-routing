@@ -33,11 +33,6 @@ export const routeState = {
   // Custom model for car_customizable and bike_customizable profiles
   customModel: null,
   
-  // Car access setting (for car_customizable profile only)
-  // false = block restricted roads (motor_vehicle=destination, private, no), true = allow them
-  // Default: false (block restricted roads to avoid illegal routes)
-  allowCarAccess: false,
-  
   // Unpaved roads setting (for car_customizable profile only)
   // false = slightly reduce unpaved roads (0.7-0.8), true = strongly avoid them (0.2-0.3)
   // Default: false (slightly reduce unpaved roads)
@@ -47,6 +42,12 @@ export const routeState = {
   // false = no additional penalty, true = strongly avoid routes that require pushing (< 6 km/h)
   // Default: false (no additional penalty)
   avoidPushing: false,
+
+  // Photo coverage avoidance options (from custom GraphHopper fork)
+  // false = no avoidance (default), true = apply custom model penalty rule
+  avoidPhotoCoverage: false,
+  avoidPhotoCoverageOnly360: false,
+  photoCoverageStrength: 50, // 0 (weak) to 100 (strong), continuous exponential scale
   
   // Default custom model (imported from customModel.js)
   // Returns the appropriate default model based on selected profile
@@ -58,7 +59,7 @@ export const routeState = {
   
   // Route data
   currentRouteData: null,
-  currentEncodedType: 'mapillary_coverage',
+  currentEncodedType: 'surface',
   
   // Waypoint optimization settings
   waypointOptimizationEnabled: true, // Enable/disable waypoint optimization

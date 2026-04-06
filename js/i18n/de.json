@@ -19,7 +19,6 @@
     "exportGpx": "GPX exportieren",
     "clear": "Löschen",
     "mapillaryWeight": "Mapillary Weight:",
-    "carAccess": "Durchfahrtsbeschränkungen ignorieren",
     "unpavedRoads": "Unbefestigte Wege meiden",
     "avoidPushing": "Schieben verhindern",
     "collapsePanel": "Einklappen",
@@ -86,7 +85,9 @@
     "terrain": "Terrain",
     "hillshade": "Hillshade",
     "terrainTitle": "Mapterhorn Terrain Daten",
-    "hillshadeTitle": "Mapterhorn Hillshade Daten"
+    "hillshadeTitle": "Mapterhorn Hillshade Daten",
+    "panoramaxCoverage": "Panoramax-Abdeckung",
+    "panoramaxCoverageTitle": "Panoramax Straßenfoto-Abdeckung anzeigen"
   },
   "contextMenu": {
     "setStart": "Startpunkt setzen",
@@ -150,6 +151,17 @@
     "footwaybicycleyes_isolated": "Gehweg, Fahrrad frei,<br>selbstständig",
     "footwaybicycleyes_adjoiningorisolated": "Gehweg, Fahrrad frei<br>(Fallback)",
     "needsclarification": "Führungsform unklar -<br>Tags nicht ausreichend"
+  },
+  "profiles": {
+    "bike": "Fahrrad",
+    "car": "Auto",
+    "foot": "Zu Fuß"
+  },
+  "photoCoverage": {
+    "avoidCoverage": "Abgedeckte Bereiche meiden",
+    "avoid360Coverage": "360°-abgedeckte Bereiche meiden",
+    "weak": "Schwach",
+    "strong": "Stark"
   },
   "github": {
     "reportIssue": "Fehler melden oder Feedback geben"

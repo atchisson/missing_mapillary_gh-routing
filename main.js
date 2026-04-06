@@ -13,8 +13,6 @@ import { setupContextMenu } from './js/ui/contextMenu.js';
 // 📦 Map Data
 import { addBasicSources } from './js/mapdata/sources.js';
 import { addBasicLayers } from './js/mapdata/basicLayers.js';
-import { addBikeLanesLayers } from './js/mapdata/bikeLanesLayers.js';
-import { addMissingStreetsLayers } from './js/mapdata/missingStreetsLayers.js';
 
 // 📦 Geocoder
 import { setupPhotonGeocoder } from './js/utils/geocoder.js';
@@ -59,24 +57,32 @@ if (document.readyState === 'loading') {
 })();
 
 // Lang switcher
-document.addEventListener('DOMContentLoaded', () => {
+function initLangSwitcher() {
   const langSwitcher = document.getElementById('lang-switcher');
   if (langSwitcher) {
-    langSwitcher.addEventListener('change', () => setLang(langSwitcher.value));
+    const setLanguage = () => {
+      console.debug('[UI] language switcher triggered:', langSwitcher.value);
+      setLang(langSwitcher.value).catch(err => console.error('[UI] setLang failed', err));
+    };
+    langSwitcher.addEventListener('change', setLanguage);
+    langSwitcher.addEventListener('click', setLanguage);
+  } else {
+    console.warn('[UI] lang-switcher element not found');
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initLangSwitcher);
+} else {
+  initLangSwitcher();
+}
 
 async function initMap() {
-  // Load pmtiles protocol
-  const pmtilesBaseURL = "https://f003.backblazeb2.com/file/nettobreite/";
-  const protocol = new pmtiles.Protocol(name => `${pmtilesBaseURL}${name}`);
-  maplibregl.addProtocol("pmtiles", protocol.tile);
-
   window.map = new maplibregl.Map({
     container: "map",
     style: "./style_light-dark.json",
-    center: [13.42113, 52.47676], // Default center (Berlin)
-    zoom: 12,                  // Default zoom
+    center: [0, 47], // Neutral starting position (central Europe) — overridden by router bbox on load
+    zoom: 5,         // Wide view so no specific city is highlighted before bbox loads
     minZoom: 7,
     maxZoom: 20
   });
@@ -161,15 +167,18 @@ function initializeMapModules(map) {
   addNavigationControl(map);
   addBasicSources(map);
   addBasicLayers(map);
-  addBikeLanesLayers(map);
-  addMissingStreetsLayers(map);
 }
 
 
 
 
 // Setup UI handlers
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setupToggleHandlers();
+    setupPanelPositioning();
+  });
+} else {
   setupToggleHandlers();
   setupPanelPositioning();
-});
+}

@@ -11,7 +11,6 @@ export function getLabelForEncodedType(type) {
     'road_class': t('heightgraph.roadClass'),
     'road_environment': t('heightgraph.roadEnvironment'),
     'road_access': t('heightgraph.roadAccess'),
-    'bicycle_infra': t('heightgraph.bicycleInfra'),
     'time': t('heightgraph.time'),
     'distance': t('heightgraph.distance'),
     'street_name': t('heightgraph.streetName')

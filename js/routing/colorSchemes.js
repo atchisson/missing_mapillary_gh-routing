@@ -56,112 +56,6 @@ export const CUSTOM_PRESENT_COLORS = {
   false: '#ec4899'   // Pink for false
 };
 
-// Bicycle infrastructure colors (base hex values)
-// Grouped by infrastructure type for logical color mapping
-export const BICYCLE_INFRA_COLORS = {
-  // None
-  'none': '#9ca3af',                    // Gray
-  
-  // Fahrradstraßen (Green shades)
-  'bicycleroad': '#22c55e',              // Green
-  'bicycleroad_vehicledestination': '#16a34a', // Dark green
-  
-  // Fußgängerzone
-  'pedestrianareabicycleyes': '#10b981', // Light green
-  
-  // Bauliche Radwege (Blue shades)
-  'cycleway_adjoining': '#3b82f6',       // Blue
-  'cycleway_isolated': '#2563eb',        // Dark blue
-  'cycleway_adjoiningorisolated': '#60a5fa', // Light blue
-  'cyclewaylink': '#1d4ed8',             // Very dark blue
-  
-  // Straßenquerung
-  'crossing': '#0ea5e9',                 // Sky blue
-  
-  // Radfahrstreifen / Schutzstreifen (Orange/Yellow shades)
-  'cyclewayonhighway_advisory': '#f59e0b', // Orange
-  'cyclewayonhighway_exclusive': '#eab308', // Yellow
-  'cyclewayonhighway_advisoryorexclusive': '#fbbf24', // Light yellow
-  'cyclewayonhighwaybetweenlanes': '#f97316', // Dark orange
-  'cyclewayonhighwayprotected': '#fb923c', // Light orange
-  
-  // Busspuren
-  'sharedbuslanebikewithbus': '#facc15', // Bright yellow
-  'sharedbuslanebuswithbike': '#eab308', // Yellow
-  'sharedmotorvehiclelane': '#fbbf24',   // Light yellow
-  
-  // Getrennte Geh- und Radwege (Purple shades)
-  'footandcyclewaysegregated_adjoining': '#a855f7', // Purple
-  'footandcyclewaysegregated_isolated': '#9333ea', // Dark purple
-  'footandcyclewaysegregated_adjoiningorisolated': '#c084fc', // Light purple
-  
-  // Gemeinsame Geh- und Radwege (Pink shades)
-  'footandcyclewayshared_adjoining': '#ec4899', // Pink
-  'footandcyclewayshared_isolated': '#db2777', // Dark pink
-  'footandcyclewayshared_adjoiningorisolated': '#f472b6', // Light pink
-  
-  // Gehweg mit Rad frei (Rose shades)
-  'footwaybicycleyes_adjoining': '#f43f5e', // Rose
-  'footwaybicycleyes_isolated': '#e11d48', // Dark rose
-  'footwaybicycleyes_adjoiningorisolated': '#fb7185', // Light rose
-  
-  // Unklar
-  'needsclarification': '#dc2626'        // Red
-};
-
-// Bicycle infrastructure descriptions mapping
-export const BICYCLE_INFRA_DESCRIPTIONS = {
-  'none': 'bicycleInfra.none',
-  'bicycleroad': 'bicycleInfra.bicycleroad',
-  'bicycleroad_vehicledestination': 'bicycleInfra.bicycleroad_vehicledestination',
-  'pedestrianareabicycleyes': 'bicycleInfra.pedestrianareabicycleyes',
-  'cycleway_adjoining': 'bicycleInfra.cycleway_adjoining',
-  'cycleway_isolated': 'bicycleInfra.cycleway_isolated',
-  'cycleway_adjoiningorisolated': 'bicycleInfra.cycleway_adjoiningorisolated',
-  'cyclewaylink': 'bicycleInfra.cyclewaylink',
-  'crossing': 'bicycleInfra.crossing',
-  'cyclewayonhighway_advisory': 'bicycleInfra.cyclewayonhighway_advisory',
-  'cyclewayonhighway_exclusive': 'bicycleInfra.cyclewayonhighway_exclusive',
-  'cyclewayonhighway_advisoryorexclusive': 'bicycleInfra.cyclewayonhighway_advisoryorexclusive',
-  'cyclewayonhighwaybetweenlanes': 'bicycleInfra.cyclewayonhighwaybetweenlanes',
-  'cyclewayonhighwayprotected': 'bicycleInfra.cyclewayonhighwayprotected',
-  'sharedbuslanebikewithbus': 'bicycleInfra.sharedbuslanebikewithbus',
-  'sharedbuslanebuswithbike': 'bicycleInfra.sharedbuslanebuswithbike',
-  'sharedmotorvehiclelane': 'bicycleInfra.sharedmotorvehiclelane',
-  'footandcyclewaysegregated_adjoining': 'bicycleInfra.footandcyclewaysegregated_adjoining',
-  'footandcyclewaysegregated_isolated': 'bicycleInfra.footandcyclewaysegregated_isolated',
-  'footandcyclewaysegregated_adjoiningorisolated': 'bicycleInfra.footandcyclewaysegregated_adjoiningorisolated',
-  'footandcyclewayshared_adjoining': 'bicycleInfra.footandcyclewayshared_adjoining',
-  'footandcyclewayshared_isolated': 'bicycleInfra.footandcyclewayshared_isolated',
-  'footandcyclewayshared_adjoiningorisolated': 'bicycleInfra.footandcyclewayshared_adjoiningorisolated',
-  'footwaybicycleyes_adjoining': 'bicycleInfra.footwaybicycleyes_adjoining',
-  'footwaybicycleyes_isolated': 'bicycleInfra.footwaybicycleyes_isolated',
-  'footwaybicycleyes_adjoiningorisolated': 'bicycleInfra.footwaybicycleyes_adjoiningorisolated',
-  'needsclarification': 'bicycleInfra.needsclarification'
-};
-
-/**
- * Get bicycle infrastructure description
- * @param {string|number} value - Bicycle infrastructure value
- * @returns {string|null} Description or null if not found
- */
-export function getBicycleInfraDescription(value) {
-  if (!value) return null;
-  const normalizedValue = String(value).toLowerCase();
-  const key = `bicycleInfra.${normalizedValue}`;
-  const translated = t(key);
-  if (translated !== key) return translated;
-
-  // Fallback to mapped i18n key (for non-standard/legacy values)
-  const fallbackKey = BICYCLE_INFRA_DESCRIPTIONS[normalizedValue];
-  if (!fallbackKey) return null;
-
-  const fallbackTranslated = t(fallbackKey);
-  if (fallbackTranslated !== fallbackKey) return fallbackTranslated;
-
-  // Last fallback: humanized raw value
-  return normalizedValue.replace(/_/g, ' ');
-}
 
 // Default colors
 export const DEFAULT_COLOR = '#9ca3af'; // Gray
@@ -229,24 +123,6 @@ export function getCustomPresentColor(value) {
  * @param {string|number} value - Bicycle infrastructure value
  * @returns {string} Hex color
  */
-export function getBicycleInfraColor(value) {
-  if (!value) return DEFAULT_COLOR;
-  const normalizedValue = String(value).toLowerCase();
-  return BICYCLE_INFRA_COLORS[normalizedValue] || DEFAULT_COLOR;
-}
-
-/**
- * Get bicycle infrastructure color (rgba format)
- * @param {string|number} value - Bicycle infrastructure value
- * @param {number} opacity - Opacity (0.0 - 1.0)
- * @returns {string} RGBA color
- */
-export function getBicycleInfraColorRgba(value, opacity = 0.3) {
-  if (!value) return opacity === 0.15 ? DEFAULT_COLOR_RGBA_LIGHT : DEFAULT_COLOR_RGBA;
-  const hexColor = getBicycleInfraColor(value);
-  return hexToRgba(hexColor, opacity);
-}
-
 /**
  * Get color for encoded value (general purpose)
  * Used in routeVisualization.js
@@ -260,20 +136,12 @@ export function getColorForEncodedValue(encodedType, value, allValues = []) {
     return DEFAULT_COLOR;
   }
   
-  if (encodedType === 'mapillary_coverage') {
-    return getCustomPresentColor(value);
-  }
-  
   if (encodedType === 'surface') {
     return getSurfaceColor(value);
   }
   
   if (encodedType === 'road_class') {
     return getRoadClassColor(value);
-  }
-  
-  if (encodedType === 'bicycle_infra') {
-    return getBicycleInfraColor(value);
   }
   
   if (encodedType === 'elevation' || encodedType === 'time' || encodedType === 'distance') {

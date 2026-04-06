@@ -6,7 +6,7 @@ import { updateRouteColor } from './routeVisualization.js';
 import { HEIGHTGRAPH_CONFIG } from './heightgraph/heightgraphConfig.js';
 import { getLabelForEncodedType, validateHeightgraphData, getContainerWidth, calculateCumulativeDistances } from './heightgraph/heightgraphUtils.js';
 import { setupCanvas, setupIndicatorCanvas } from './heightgraph/heightgraphCanvas.js';
-import { drawBackground, drawGrid, drawElevationLine, drawXAxisLabels, fillSegmentsByValue, getSurfaceColor, getRoadClassColor, getBicycleInfraColor } from './heightgraph/heightgraphDrawing.js';
+import { drawBackground, drawGrid, drawElevationLine, drawXAxisLabels, fillSegmentsByValue, getSurfaceColor, getRoadClassColor } from './heightgraph/heightgraphDrawing.js';
 import { setupHeightgraphInteractivity, cleanupInteractivityHandlers } from './heightgraph/heightgraphInteractivity.js';
 import { updateHeightgraphStats } from './heightgraph/heightgraphStats.js';
 import { t } from '../i18n/i18n.js';
@@ -210,20 +210,12 @@ export function drawHeightgraph(elevations, totalDistance, encodedValues = {}, c
       drawElevationLine(ctx, points);
       
       // Fill area under elevation curve based on selected encoded value
-      const currentSelectedType = select ? select.value : 'mapillary_coverage';
+      const currentSelectedType = select ? select.value : 'surface';
       
-      if (currentSelectedType === 'mapillary_coverage' && encodedValues.mapillary_coverage && encodedValues.mapillary_coverage.length > 0 && points.length > 0) {
-        const getCustomPresentColor = (value) => {
-          const isTrue = value === true || value === 'True' || value === 'true';
-          return isTrue ? 'rgba(59, 130, 246, 0.3)' : 'rgba(236, 72, 153, 0.3)';
-        };
-        fillSegmentsByValue(ctx, points, encodedValues.mapillary_coverage, getCustomPresentColor, padding, graphHeight);
-      } else if (currentSelectedType === 'surface' && encodedValues.surface && encodedValues.surface.length > 0 && points.length > 0) {
+      if (currentSelectedType === 'surface' && encodedValues.surface && encodedValues.surface.length > 0 && points.length > 0) {
         fillSegmentsByValue(ctx, points, encodedValues.surface, getSurfaceColor, padding, graphHeight);
       } else if (currentSelectedType === 'road_class' && encodedValues.road_class && encodedValues.road_class.length > 0 && points.length > 0) {
         fillSegmentsByValue(ctx, points, encodedValues.road_class, getRoadClassColor, padding, graphHeight);
-      } else if (currentSelectedType === 'bicycle_infra' && encodedValues.bicycle_infra && encodedValues.bicycle_infra.length > 0 && points.length > 0) {
-        fillSegmentsByValue(ctx, points, encodedValues.bicycle_infra, getBicycleInfraColor, padding, graphHeight);
       }
     }
   }
@@ -238,7 +230,7 @@ export function drawHeightgraph(elevations, totalDistance, encodedValues = {}, c
   }
   
   // Update stats
-  const statsSelectedType = select ? select.value : 'mapillary_coverage';
+  const statsSelectedType = select ? select.value : 'surface';
   updateHeightgraphStats(statsSelectedType, encodedValues);
 }
 

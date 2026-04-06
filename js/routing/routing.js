@@ -12,7 +12,6 @@ import {
   buildPostRequestBodyWithCustomModel,
   getMapillaryPriority,
   updateMapillaryPriority,
-  updateCarAccessRule,
   updateUnpavedRoadsRule,
   updateAvoidPushingRule
 } from './customModel.js';
@@ -25,8 +24,7 @@ import {
   ROUTE_CALCULATION as ROUTE_CONFIG,
   COORDINATE_LIMITS,
   UI_IDS,
-  LAYER_IDS,
-  CONTEXT_LAYER_IDS
+  LAYER_IDS
 } from '../utils/constants.js';
 import { setCalculateRouteFunction } from './routeRecalculator.js';
 import { t } from '../i18n/i18n.js';
@@ -101,27 +99,8 @@ async function calculateComparisonWithWeightOne(map, allPoints, currentPath, cur
       const distanceDiff = comparisonPath.distance - currentPath.distance; // in meters
       const timeDiff = (comparisonPath.time - currentPath.time) / 1000; // in seconds
       
-      // Calculate mapillary_coverage distance for current route
-      const currentMapillaryDistance = calculateMapillaryCoverageDistance(currentCoordinates, currentEncodedValues);
-      
-      // Get comparison route coordinates and encoded values
-      let comparisonCoordinates = [];
-      if (comparisonPath.points && comparisonPath.points.coordinates) {
-        comparisonCoordinates = comparisonPath.points.coordinates;
-      } else if (comparisonPath.points && comparisonPath.points.geometry && comparisonPath.points.geometry.coordinates) {
-        comparisonCoordinates = comparisonPath.points.geometry.coordinates;
-      }
-      
-      // Extract encoded values from comparison route using the same logic as main route
-      const comparisonEncodedValues = extractEncodedValuesFull(comparisonPath, comparisonCoordinates);
-      
-      // Calculate mapillary_coverage distance for comparison route
-      const comparisonMapillaryDistance = calculateMapillaryCoverageDistance(comparisonCoordinates, comparisonEncodedValues);
-      
-      const mapillaryDistanceDiff = comparisonMapillaryDistance - currentMapillaryDistance;
-      
-      // Display comparison
-      displayComparison(distanceDiff, timeDiff, mapillaryDistanceDiff);
+      // Mapillary coverage comparison disabled (not supported) - show only distance/time comparison
+      displayComparison(distanceDiff, timeDiff, null);
     }
   } catch (error) {
     console.error('Error calculating comparison route:', error);
@@ -133,33 +112,6 @@ async function calculateComparisonWithWeightOne(map, allPoints, currentPath, cur
   }
 }
 
-// Calculate distance of segments with mapillary_coverage==false
-// A segment goes from point i to point i+1, and the value belongs to point i
-function calculateMapillaryCoverageDistance(coordinates, encodedValues) {
-  if (!coordinates || coordinates.length < 2 || !encodedValues || !encodedValues.mapillary_coverage) {
-    return 0;
-  }
-  
-  let totalDistance = 0;
-  const mapillaryCoverage = encodedValues.mapillary_coverage;
-  
-  // Iterate over segments: segment i goes from point i to point i+1
-  // The mapillary_coverage value at point i applies to this segment
-  for (let i = 0; i < coordinates.length - 1; i++) {
-    // Check if the segment has mapillary_coverage==false
-    // Accept both false and 0 as valid "no coverage" values
-    const hasNoCoverage = mapillaryCoverage[i] === false || mapillaryCoverage[i] === 0 || 
-                          mapillaryCoverage[i] === null || mapillaryCoverage[i] === undefined;
-    
-    if (hasNoCoverage) {
-      // Calculate segment distance using Haversine formula
-      const segmentDist = calculateDistance(coordinates[i], coordinates[i + 1]);
-      totalDistance += segmentDist;
-    }
-  }
-  
-  return totalDistance;
-}
 
 // Extract encoded values using the same full logic as main route calculation
 // This ensures mapillary_coverage is extracted correctly from both details and instructions
@@ -205,7 +157,6 @@ function extractEncodedValuesFull(path, coordinates) {
     const timeArray = new Array(coordinates.length).fill(0);
     const distanceArray = new Array(coordinates.length).fill(0);
     const streetNameArray = new Array(coordinates.length).fill('');
-    const customPresentArray = new Array(coordinates.length).fill(null);
     
     const osmWayIdArray = new Array(coordinates.length).fill(null);
     
@@ -217,10 +168,6 @@ function extractEncodedValuesFull(path, coordinates) {
           timeArray[i] = inst.time || 0;
           distanceArray[i] = inst.distance || 0;
           streetNameArray[i] = inst.street_name || '';
-          // Check if mapillary_coverage is in instruction
-          if (inst.mapillary_coverage !== undefined) {
-            customPresentArray[i] = inst.mapillary_coverage;
-          }
           // Extract osm_way_id from instruction if available
           if (inst.osm_way_id !== undefined) {
             osmWayIdArray[i] = inst.osm_way_id;
@@ -248,10 +195,6 @@ function extractEncodedValuesFull(path, coordinates) {
     encodedValues.time = timeArray;
     encodedValues.distance = distanceArray;
     encodedValues.street_name = streetNameArray;
-    // Only set mapillary_coverage if we have values
-    if (customPresentArray.some(v => v !== null)) {
-      encodedValues.mapillary_coverage = customPresentArray;
-    }
   }
   
   return encodedValues;
@@ -291,9 +234,8 @@ function displayComparison(
   
   const distanceElement = document.getElementById('comparison-distance');
   const timeElement = document.getElementById('comparison-time');
-  const mapillaryDistanceElement = document.getElementById('comparison-mapillary-distance');
   
-  if (!distanceElement || !timeElement || !mapillaryDistanceElement) {
+  if (!distanceElement || !timeElement) {
     console.warn('Comparison elements not found');
     return;
   }
@@ -312,12 +254,6 @@ function displayComparison(
     }
   }
   
-  if (mapillaryDistanceElement) {
-    const textSpan = mapillaryDistanceElement.querySelector('.comparison-text');
-    if (textSpan) {
-      textSpan.textContent = formatDistance(mapillaryDistanceDiff);
-    }
-  }
   
   // Show container
   comparisonContainer.style.display = 'block';
@@ -377,32 +313,21 @@ function getProfileParam() {
   return getGraphHopperProfile(routeState.selectedProfile);
 }
 
-// Build GET request URL for route calculation
-// points: Array of [lng, lat] coordinates
+// Build GET request URL for route calculation (standard profiles: car, bike, foot)
+// Only requests road_class details to avoid HTTP 400 from unavailable properties
 function buildGetRequestUrl(points, profileParam) {
-  // Build point parameters: point=lat,lng&point=lat,lng&...
   const pointParams = points.map(p => `point=${p[1]},${p[0]}`).join('&');
-  const baseUrl = `${GRAPHHOPPER_URL}/route?${pointParams}&profile=${profileParam}&points_encoded=false&elevation=true`;
-  const chDisableParam = (profileParam === 'car' || profileParam === 'bike') ? '&ch.disable=true' : '';
-  const detailsParams = ['surface', 'mapillary_coverage', 'road_class', 'road_access', 'bicycle_infra', 'osm_way_id']
-    .map(d => `details=${d}`)
-    .join('&');
-  return `${baseUrl}${chDisableParam}&${detailsParams}&type=json`;
+  return `${GRAPHHOPPER_URL}/route?${pointParams}&profile=${profileParam}&points_encoded=false&elevation=true&ch.disable=true&details=road_class&type=json`;
 }
 
-// Fetch route with GET request (with fallback for details format)
+// Fetch route with GET request (with fallback without details if needed)
 async function fetchRouteGet(url) {
   try {
     let response = await fetch(url);
     if (response.ok) return response;
-    
-    // Try comma-separated details format
-    const urlComma = url.replace(/details=[^&]+/g, 'details=' + ['surface', 'mapillary_coverage', 'road_class', 'road_access', 'bicycle_infra'].join(','));
-    response = await fetch(urlComma);
-    if (response.ok) return response;
-    
-    // Try without details
-    const urlNoDetails = url.replace(/&details=[^&]+/g, '').replace(/details=[^&]+&/g, '');
+
+    // Fallback: strip details if server rejects them
+    const urlNoDetails = url.replace(/&details=[^&]*/g, '');
     response = await fetch(urlNoDetails);
     return response;
   } catch (error) {
@@ -721,13 +646,8 @@ export async function calculateRoute(map, start, end, waypoints = []) {
     if (supportsCustomModel(routeState.selectedProfile)) {
       routeState.customModel = ensureCustomModel(routeState.customModel, routeState.selectedProfile);
       
-      // Update car access rule for car_customizable profile
+      // Update unpaved roads rule for car_customizable profile
       if (routeState.selectedProfile === 'car_customizable' && routeState.customModel) {
-        routeState.customModel = updateCarAccessRule(
-          routeState.customModel,
-          routeState.allowCarAccess
-        );
-        // Update unpaved roads rule
         routeState.customModel = updateUnpavedRoadsRule(
           routeState.customModel,
           routeState.avoidUnpavedRoads
@@ -988,9 +908,6 @@ export async function calculateRoute(map, start, end, waypoints = []) {
           coordinates: coordinates
         };
         
-        // Update context layers opacity when route is displayed
-        updateContextLayersOpacity(map, true);
-        
         // Show GPX export button
         const exportGpxBtn = document.getElementById(UI_IDS.EXPORT_GPX_BTN);
         if (exportGpxBtn) {
@@ -1073,19 +990,14 @@ export async function calculateRoute(map, start, end, waypoints = []) {
           left: 20
         };
       } else {
-        // On desktop: account for right-side panels (routing panel: 320px + context panel: 320px + margins)
+        // On desktop: account for routing panel width
         const routingPanel = document.querySelector('.routing-panel');
-        const contextPanel = document.querySelector('.context-panel');
-        
-        // Calculate actual panel widths dynamically
+
+        // Calculate actual panel width dynamically
         let rightPanelWidth = 0;
         if (routingPanel && !routingPanel.classList.contains('collapsed')) {
           const routingRect = routingPanel.getBoundingClientRect();
           rightPanelWidth += routingRect.width + 10; // Panel width + margin
-        }
-        if (contextPanel && !contextPanel.classList.contains('collapsed')) {
-          const contextRect = contextPanel.getBoundingClientRect();
-          rightPanelWidth += contextRect.width + 10; // Panel width + margin
         }
         
         // Fallback to default if no panels found
@@ -1198,72 +1110,5 @@ export function clearRoute(map) {
     updateCoordinateTooltips(); // Clear tooltips
   });
   
-  // Restore context layers opacity when route is cleared
-  updateContextLayersOpacity(map, false);
 }
 
-/**
- * Update opacity of context layers (bike lanes and missing streets) based on route visibility
- * @param {maplibregl.Map} map - Map instance
- * @param {boolean} hasRoute - Whether a route is currently displayed
- */
-export function updateContextLayersOpacity(map, hasRoute) {
-  if (!map) return;
-  
-  // Use context layer IDs from constants
-  const contextLayerIds = CONTEXT_LAYER_IDS;
-  
-  // Default opacity values (from layer definitions)
-  const defaultOpacity = {
-    // Bike lanes don't have explicit opacity, so they default to 1.0
-    'bike-lanes-needsClarification': 1.0,
-    'bike-lanes-gehweg': 1.0,
-    'bike-lanes-kfz': 1.0,
-    'bike-lanes-fussverkehr': 1.0,
-    'bike-lanes-eigenstaendig': 1.0,
-    'bike-lanes-baulich': 1.0,
-    // Missing streets have 0.7 opacity
-    'missing-streets-missing-pathclasses': 0.7,
-    'missing-streets-missing-roads': 0.7,
-    'missing-streets-missing-bikelanes': 0.7,
-    'missing-streets-regular-pathclasses': 0.7,
-    'missing-streets-regular-roads': 0.7,
-    'missing-streets-regular-bikelanes': 0.7,
-    'missing-streets-pano-pathclasses': 0.7,
-    'missing-streets-pano-roads': 0.7,
-    'missing-streets-pano-bikelanes': 0.7
-  };
-  
-  // Opacity when route is displayed (different for bike lanes and missing streets)
-  const routeOpacity = {
-    // Bike lanes: 0.5
-    'bike-lanes-needsClarification': 0.5,
-    'bike-lanes-gehweg': 0.5,
-    'bike-lanes-kfz': 0.5,
-    'bike-lanes-fussverkehr': 0.5,
-    'bike-lanes-eigenstaendig': 0.5,
-    'bike-lanes-baulich': 0.5,
-    // Missing streets: 0.35
-    'missing-streets-missing-pathclasses': 0.35,
-    'missing-streets-missing-roads': 0.35,
-    'missing-streets-missing-bikelanes': 0.35,
-    'missing-streets-regular-pathclasses': 0.35,
-    'missing-streets-regular-roads': 0.35,
-    'missing-streets-regular-bikelanes': 0.35,
-    'missing-streets-pano-pathclasses': 0.35,
-    'missing-streets-pano-roads': 0.35,
-    'missing-streets-pano-bikelanes': 0.35
-  };
-  
-  contextLayerIds.forEach(layerId => {
-    if (!map.getLayer(layerId)) return;
-    
-    // Check if layer is visible
-    const visibility = map.getLayoutProperty(layerId, 'visibility');
-    if (visibility !== 'visible') return;
-    
-    // Set opacity based on route visibility
-    const opacity = hasRoute ? routeOpacity[layerId] : defaultOpacity[layerId];
-    map.setPaintProperty(layerId, 'line-opacity', opacity);
-  });
-}

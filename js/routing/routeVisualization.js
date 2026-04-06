@@ -1,7 +1,7 @@
 // Route visualization: colors, hover effects, mapillary_coverage highlighting
 
 import { routeState } from './routeState.js';
-import { getColorForEncodedValue, getBicycleInfraDescription } from './colorSchemes.js';
+import { getColorForEncodedValue } from './colorSchemes.js';
 import { t } from '../i18n/i18n.js';
 
 export function setupRouteHover(map) {
@@ -182,11 +182,6 @@ export function setupRouteHover(map) {
                  encodedValues.road_class[dataIndex] !== null) {
         selectedValue = encodedValues.road_class[dataIndex];
         valueLabel = t('heightgraph.roadClass');
-      } else if (selectedType === 'bicycle_infra' && encodedValues.bicycle_infra && 
-                 encodedValues.bicycle_infra[dataIndex] !== undefined && 
-                 encodedValues.bicycle_infra[dataIndex] !== null) {
-        selectedValue = encodedValues.bicycle_infra[dataIndex];
-        valueLabel = t('heightgraph.bicycleInfra');
       }
       
       // Highlight the hovered segment by making it thicker (always show, even if no value)
@@ -233,10 +228,6 @@ export function setupRouteHover(map) {
         let displayValue = '';
         if (typeof selectedValue === 'boolean') {
           displayValue = selectedValue ? t('heightgraph.tooltip.yes') : t('heightgraph.tooltip.no');
-        } else if (selectedType === 'bicycle_infra') {
-          // Use description for bicycle_infra
-          const description = getBicycleInfraDescription(selectedValue);
-          displayValue = description || String(selectedValue);
         } else {
           displayValue = String(selectedValue);
         }

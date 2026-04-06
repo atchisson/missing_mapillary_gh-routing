@@ -19,7 +19,6 @@
     "exportGpx": "Export GPX",
     "clear": "Clear",
     "mapillaryWeight": "Mapillary Weight:",
-    "carAccess": "Ignore access restrictions",
     "unpavedRoads": "Avoid unpaved roads",
     "avoidPushing": "Avoid pushing bike",
     "collapsePanel": "Collapse",
@@ -86,7 +85,9 @@
     "terrain": "Terrain",
     "hillshade": "Hillshade",
     "terrainTitle": "Mapterhorn terrain data",
-    "hillshadeTitle": "Mapterhorn hillshade data"
+    "hillshadeTitle": "Mapterhorn hillshade data",
+    "panoramaxCoverage": "Panoramax coverage",
+    "panoramaxCoverageTitle": "Show Panoramax street-level photo coverage"
   },
   "contextMenu": {
     "setStart": "Set as start",
@@ -150,6 +151,17 @@
     "footwaybicycleyes_isolated": "Footway, cycling allowed,<br>standalone",
     "footwaybicycleyes_adjoiningorisolated": "Footway, cycling allowed<br>(fallback)",
     "needsclarification": "Type unclear -<br>tags insufficient"
+  },
+  "profiles": {
+    "bike": "Bike",
+    "car": "Car",
+    "foot": "Walk"
+  },
+  "photoCoverage": {
+    "avoidCoverage": "Avoid photo coverage",
+    "avoid360Coverage": "Avoid 360° photo coverage",
+    "weak": "Weak",
+    "strong": "Strong"
   },
   "github": {
     "reportIssue": "Report a bug or give feedback"

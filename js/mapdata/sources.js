@@ -2,75 +2,101 @@
 
 export function addBasicSources(map) {
   // Raster: OSM Standard
-  map.addSource("osm", {
-    type: "raster",
-    tiles: [
-      "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-    ],
-    tileSize: 256,
-    attribution: "© OpenStreetMap contributors"
-  });
+  if (!map.getSource("osm")) {
+    map.addSource("osm", {
+      type: "raster",
+      tiles: [
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ],
+      tileSize: 256,
+      attribution: "© OpenStreetMap contributors"
+    });
+  }
 
   // Raster: Satellite ESRI
-  map.addSource("satellite", {
-    type: "raster",
-    tiles: [
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-    ],
-    tileSize: 256,
-    attribution: "Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community"
-  });
+  if (!map.getSource("satellite")) {
+    map.addSource("satellite", {
+      type: "raster",
+      tiles: [
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      ],
+      tileSize: 256,
+      attribution: "Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+    });
+  }
 
   // Raster-DEM: Terrain (Mapterhorn)
-  map.addSource("terrain", {
-    type: "raster-dem",
-    url: "https://tiles.mapterhorn.com/tilejson.json",
-    tileSize: 512,
-    encoding: "terrarium",
-    attribution: "© Mapterhorn - https://mapterhorn.com"
-  });
+  if (!map.getSource("terrain")) {
+    map.addSource("terrain", {
+      type: "raster-dem",
+      url: "https://tiles.mapterhorn.com/tilejson.json",
+      tileSize: 512,
+      encoding: "terrarium",
+      attribution: "© Mapterhorn - https://mapterhorn.com"
+    });
+  }
   
   // Raster-DEM: Hillshade (Mapterhorn)
-  map.addSource("hillshade", {
-    type: "raster-dem",
-    url: "https://tiles.mapterhorn.com/tilejson.json",
-    tileSize: 512,
-    encoding: "terrarium",
-    attribution: "© Mapterhorn - https://mapterhorn.com"
-  });
+  if (!map.getSource("hillshade")) {
+    map.addSource("hillshade", {
+      type: "raster-dem",
+      url: "https://tiles.mapterhorn.com/tilejson.json",
+      tileSize: 512,
+      encoding: "terrarium",
+      attribution: "© Mapterhorn - https://mapterhorn.com"
+    });
+  }
 
   // Bike lanes source
-  map.addSource("bike-lanes", {
-    type: "vector",
-    tiles: [
-      "https://tiles.tilda-geo.de/atlas_generalized_bikelanes/{z}/{x}/{y}"
-    ],
-    minzoom: 9,
-    maxzoom: 22
-  });
+  if (!map.getSource("bike-lanes")) {
+    map.addSource("bike-lanes", {
+      type: "vector",
+      tiles: [
+        "https://tiles.tilda-geo.de/atlas_generalized_bikelanes/{z}/{x}/{y}"
+      ],
+      minzoom: 9,
+      maxzoom: 22
+    });
+  }
+
+  // Panoramax photo coverage vector tiles (official API)
+  if (!map.getSource("panoramax")) {
+    map.addSource("panoramax", {
+      type: "vector",
+      tiles: ["https://api.panoramax.xyz/api/map/{z}/{x}/{y}.mvt"],
+      minzoom: 0,
+      maxzoom: 15,
+      attribution: '© <a href="https://panoramax.xyz" target="_blank">Panoramax</a>'
+    });
+  }
 
   // Mapillary missing streets sources (3 sources combined)
   // Source 1: Roads
-  map.addSource("mapillary-roads", {
-    type: "vector",
-    tiles: [
-      "https://tiles.tilda-geo.de/atlas_generalized_roads/{z}/{x}/{y}"
-    ],
-    minzoom: 9,
-    maxzoom: 22
-  });
+  if (!map.getSource("mapillary-roads")) {
+    map.addSource("mapillary-roads", {
+      type: "vector",
+      tiles: [
+        "https://tiles.tilda-geo.de/atlas_generalized_roads/{z}/{x}/{y}"
+      ],
+      minzoom: 9,
+      maxzoom: 22
+    });
+  }
   
   // Source 2: Bike lanes (reused from bike-lanes, but with different styling)
   // Note: bike-lanes source is already added above
   
   // Source 3: Road path classes
-  map.addSource("mapillary-roadspathclasses", {
-    type: "vector",
-    tiles: [
-      "https://tiles.tilda-geo.de/atlas_generalized_roadspathclasses/{z}/{x}/{y}"
-    ],
-    minzoom: 11,
-    maxzoom: 22
-  });
+  if (!map.getSource("mapillary-roadspathclasses")) {
+    map.addSource("mapillary-roadspathclasses", {
+      type: "vector",
+      tiles: [
+        "https://tiles.tilda-geo.de/atlas_generalized_roadspathclasses/{z}/{x}/{y}"
+      ],
+      minzoom: 11,
+      maxzoom: 22
+    });
+  }
 }
+
 

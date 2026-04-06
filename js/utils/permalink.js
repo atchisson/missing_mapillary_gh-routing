@@ -4,25 +4,15 @@ import { routeState } from '../routing/routeState.js';
 import { updateMarkers, getRandomWaypointSvg } from '../routing/routingUI.js';
 import { updateWaypointsList } from '../routing/waypoints/waypointList.js';
 import { updateCoordinateTooltips } from '../routing/coordinates/coordinateTooltips.js';
-import {
-  supportsCustomModel,
-  ensureCustomModel,
-  isDefaultCustomModel,
-  getMapillaryPriority,
-  updateMapillaryPriority,
-  updateCarAccessRule,
-  updateUnpavedRoadsRule,
-  updateAvoidPushingRule,
-  defaultCarCustomModel,
-  defaultBikeCustomModel
-} from '../routing/customModel.js';
-import { MAPILLARY_SLIDER_VALUES, PERMALINK as PERMALINK_CONFIG } from './constants.js';
+import { ensureCustomModel } from '../routing/customModel.js';
+import { GRAPHHOPPER_URL, PERMALINK as PERMALINK_CONFIG } from './constants.js';
 
 export class Permalink {
   constructor(map) {
     this.map = map;
     this.isUpdating = false;
     this.pendingRouteCalculation = false; // Flag to track if route should be calculated after map loads
+    this.hasMapParam = false; // track if map position came from URL
     this.setupEventListeners();
     // Load from URL asynchronously (don't await to avoid blocking constructor)
     this.loadFromURL().catch(err => {
@@ -35,8 +25,11 @@ export class Permalink {
     this.map.on('moveend', () => this.updateURL());
     this.map.on('zoomend', () => this.updateURL());
     
-    // Wait for map to load before calculating route from URL
-    this.map.once('load', () => {
+    // Wait for map to load before calculating route from URL and setting default view
+    this.map.once('load', async () => {
+      if (!this.hasMapParam) {
+        await this.fitMapToRouterBBox();
+      }
       if (this.pendingRouteCalculation) {
         this.calculateRouteFromURL();
       }
@@ -46,7 +39,6 @@ export class Permalink {
     // We'll use a MutationObserver or polling to detect routeState changes
     // For now, we'll update on specific events
     this.setupRouteStateListeners();
-    this.setupContextLayerListeners();
   }
 
   setupRouteStateListeners() {
@@ -81,24 +73,6 @@ export class Permalink {
     });
   }
 
-  setupContextLayerListeners() {
-    // Listen to context layer checkbox changes
-    const toggleBikelanes = document.getElementById('toggle-bikelanes');
-    const toggleMissingStreets = document.getElementById('toggle-missing-streets');
-    
-    if (toggleBikelanes) {
-      toggleBikelanes.addEventListener('change', () => {
-        this.updateURL();
-      });
-    }
-    
-    if (toggleMissingStreets) {
-      toggleMissingStreets.addEventListener('change', () => {
-        this.updateURL();
-      });
-    }
-  }
-
   getRouteStateSnapshot() {
     return {
       startPoint: routeState.startPoint,
@@ -107,6 +81,154 @@ export class Permalink {
       currentEncodedType: routeState.currentEncodedType,
       customModel: routeState.customModel
     };
+  }
+
+  async getRouterBBox() {
+    try {
+      const infoUrl = `${GRAPHHOPPER_URL}/info`;
+      const response = await fetch(infoUrl);
+      if (!response.ok) {
+        console.warn('[Permalink] Could not load router info, status', response.status);
+        return null;
+      }
+      const data = await response.json();
+
+      // Common keys: bbox or boundingBox, plus min/max lat/lon
+      let bbox = null;
+      if (Array.isArray(data.bbox) && data.bbox.length === 4) {
+        bbox = data.bbox;
+      } else if (Array.isArray(data.boundingBox) && data.boundingBox.length === 4) {
+        bbox = data.boundingBox;
+      } else if (data.min_lat != null && data.min_lon != null && data.max_lat != null && data.max_lon != null) {
+        bbox = [data.min_lat, data.min_lon, data.max_lat, data.max_lon];
+      } else if (data.minLat != null && data.minLon != null && data.maxLat != null && data.maxLon != null) {
+        bbox = [data.minLat, data.minLon, data.maxLat, data.maxLon];
+      }
+
+      if (!bbox) {
+        console.warn('[Permalink] Router info does not include bboxes');
+        return null;
+      }
+
+      return this.normalizeBbox(bbox);
+    } catch (err) {
+      console.warn('[Permalink] failed to fetch router bbox:', err);
+      return null;
+    }
+  }
+
+  normalizeBbox(bbox) {
+    if (!Array.isArray(bbox) || bbox.length !== 4) return null;
+
+    const [a, b, c, d] = bbox.map(Number);
+    if ([a, b, c, d].some(v => Number.isNaN(v))) return null;
+
+    const isLat = v => !Number.isNaN(v) && v >= -90 && v <= 90;
+    const isLon = v => !Number.isNaN(v) && v >= -180 && v <= 180;
+
+    // Prefer GraphHopper format: [minLon,minLat,maxLon,maxLat]
+    if (isLon(a) && isLat(b) && isLon(c) && isLat(d)) {
+      return [[a, b], [c, d]];
+    }
+
+    // Try [minLat,minLon,maxLat,maxLon] just in case
+    if (isLat(a) && isLon(b) && isLat(c) && isLon(d)) {
+      return [[b, a], [d, c]];
+    }
+
+    // fallback exact min/max by bounding all coords
+    const lngValues = [a, b, c, d].filter(isLon);
+    const latValues = [a, b, c, d].filter(isLat);
+    if (lngValues.length >= 2 && latValues.length >= 2) {
+      const minLng = Math.min(...lngValues);
+      const maxLng = Math.max(...lngValues);
+      const minLat = Math.min(...latValues);
+      const maxLat = Math.max(...latValues);
+      return [[minLng, minLat], [maxLng, maxLat]];
+    }
+
+    return null;
+  }
+
+  async fitMapToRouterBBox() {
+    if (!this.map) return;
+
+    const bbox = await this.getRouterBBox();
+    if (!bbox) {
+      console.warn('[Permalink] No router bbox available to fit map');
+      return;
+    }
+
+    try {
+      this.map.fitBounds(bbox, {
+        padding: { top: 70, bottom: 70, left: 70, right: 70 },
+        duration: 800
+      });
+      console.debug('[Permalink] Map fit to router bbox', bbox);
+    } catch (err) {
+      console.warn('[Permalink] fitBounds failed:', err);
+    }
+
+    // Draw a subtle rectangle showing the GraphHopper coverage area
+    this.drawRouterBBoxLayer(bbox);
+  }
+
+  /**
+   * Add a GeoJSON polygon layer showing the GraphHopper coverage area.
+   * @param {Array} bbox - [[minLng, minLat], [maxLng, maxLat]]
+   */
+  drawRouterBBoxLayer(bbox) {
+    if (!this.map || !bbox) return;
+
+    const [[minLng, minLat], [maxLng, maxLat]] = bbox;
+
+    const geojson = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [minLng, minLat],
+          [maxLng, minLat],
+          [maxLng, maxLat],
+          [minLng, maxLat],
+          [minLng, minLat]
+        ]]
+      }
+    };
+
+    // Remove existing layers/source if they already exist (e.g., after a style reload)
+    if (this.map.getLayer('router-bbox-fill')) this.map.removeLayer('router-bbox-fill');
+    if (this.map.getLayer('router-bbox-border')) this.map.removeLayer('router-bbox-border');
+    if (this.map.getSource('router-bbox')) this.map.removeSource('router-bbox');
+
+    this.map.addSource('router-bbox', {
+      type: 'geojson',
+      data: geojson
+    });
+
+    // Very light fill to mark the covered area
+    this.map.addLayer({
+      id: 'router-bbox-fill',
+      type: 'fill',
+      source: 'router-bbox',
+      paint: {
+        'fill-color': '#3b82f6',
+        'fill-opacity': 0.04
+      }
+    });
+
+    // Dashed border to clearly outline the coverage zone
+    this.map.addLayer({
+      id: 'router-bbox-border',
+      type: 'line',
+      source: 'router-bbox',
+      paint: {
+        'line-color': '#3b82f6',
+        'line-width': 1.5,
+        'line-opacity': 0.5,
+        'line-dasharray': [4, 4]
+      }
+    });
   }
 
   updateURL() {
@@ -154,52 +276,10 @@ export class Permalink {
       paramParts.push(`profile=${encodeURIComponent(routeState.selectedProfile)}`);
     }
     
-    // Custom model (for customizable profiles)
-    // Only include mapillary_weight in URL if it differs from the default
-    if (supportsCustomModel(routeState.selectedProfile) && routeState.customModel) {
-      const currentWeight = getMapillaryPriority(routeState.customModel);
-      // Get the correct default model for the selected profile
-      const defaultModel = routeState.selectedProfile === 'bike_customizable' 
-        ? defaultBikeCustomModel 
-        : defaultCarCustomModel;
-      const defaultWeight = getMapillaryPriority(defaultModel);
-      
-      // Only add to URL if it differs from the default
-      if (currentWeight !== null && currentWeight !== undefined && currentWeight !== defaultWeight) {
-        paramParts.push(`mapillary_weight=${currentWeight.toString()}`);
-      }
-      
-      // Car access (only for car_customizable, only if enabled)
-      if (routeState.selectedProfile === 'car_customizable' && routeState.allowCarAccess) {
-        paramParts.push('allowCarAccess=1');
-      }
-      
-      // Unpaved roads (only for car_customizable, only if enabled)
-      if (routeState.selectedProfile === 'car_customizable' && routeState.avoidUnpavedRoads) {
-        paramParts.push('avoidUnpavedRoads=1');
-      }
-      
-      // Avoid pushing (only for bike_customizable, only if enabled)
-      if (routeState.selectedProfile === 'bike_customizable' && routeState.avoidPushing) {
-        paramParts.push('avoidPushing=1');
-      }
-    }
     
     // Encoded value type
-    if (routeState.currentEncodedType && routeState.currentEncodedType !== 'mapillary_coverage') {
+    if (routeState.currentEncodedType) {
       paramParts.push(`encoded=${encodeURIComponent(routeState.currentEncodedType)}`);
-    }
-    
-    // Context layers
-    const toggleBikelanes = document.getElementById('toggle-bikelanes');
-    const toggleMissingStreets = document.getElementById('toggle-missing-streets');
-    
-    if (toggleBikelanes && toggleBikelanes.checked) {
-      paramParts.push('bikelanes=1');
-    }
-    
-    if (toggleMissingStreets && toggleMissingStreets.checked) {
-      paramParts.push('missingStreets=1');
     }
     
     const newURL = `${window.location.pathname}?${paramParts.join('&')}`;
@@ -219,6 +299,7 @@ export class Permalink {
         const lng = parseFloat(parts[2]);
         
         if (!isNaN(zoom) && !isNaN(lat) && !isNaN(lng)) {
+          this.hasMapParam = true;
           this.isUpdating = true;
           this.map.setCenter([lng, lat]);
           this.map.setZoom(zoom);
@@ -227,6 +308,11 @@ export class Permalink {
           }, 100);
         }
       }
+    }
+
+    if (!this.hasMapParam) {
+      // If no explicit map parameter is available in URL, map will be centered to router bbox on load.
+      console.debug('[Permalink] No map param in URL, will fit router bbox once map is loaded');
     }
     
     // Load route points
@@ -331,193 +417,17 @@ export class Permalink {
       updateCoordinateTooltips();
     }
     
-    // Load mapillary_weight (for car_customizable profile)
-    // Load profile first to know which default model to use
+    // Restore profile from URL (default: bike_customizable)
     const profileParam = params.get('profile');
-    
-    // Support both old 'custom_model' format (for backwards compatibility) and new 'mapillary_weight' format
-    const mapillaryWeightParam = params.get('mapillary_weight');
-    const customModelParam = params.get('custom_model'); // Legacy support
-    
-    // Determine which profile to use
-    let selectedProfile = 'bike_customizable'; // default
-    if (profileParam) {
-      // Support legacy 'car' profile parameter (for backwards compatibility)
-      if (profileParam === 'car' && (mapillaryWeightParam || customModelParam)) {
-        selectedProfile = 'car_customizable';
-      } else {
-        selectedProfile = profileParam;
-      }
-    } else if (mapillaryWeightParam || customModelParam) {
-      // If mapillary_weight is present but no profile, default to car_customizable (Auto)
-      // This handles URLs that were created before profile was saved
-      selectedProfile = 'car_customizable';
-    }
-    
-    if (mapillaryWeightParam) {
-      // New format: only mapillary_weight
-      const weight = parseFloat(mapillaryWeightParam);
-      if (!isNaN(weight)) {
-        // Initialize custom model with correct profile
-        routeState.customModel = ensureCustomModel(null, selectedProfile);
-        // Update mapillary priority
-        routeState.customModel = updateMapillaryPriority(routeState.customModel, weight);
-      }
-    } else if (customModelParam) {
-      // Legacy format: full custom model (for backwards compatibility)
-      try {
-        // Try to parse as JSON, if it fails, store as string
-        try {
-          routeState.customModel = JSON.parse(decodeURIComponent(customModelParam));
-        } catch (e) {
-          // If parsing fails, store as string (might already be JSON string)
-          routeState.customModel = decodeURIComponent(customModelParam);
-        }
-      } catch (error) {
-        console.warn('Failed to parse custom_model from URL:', error);
-      }
-    }
-    
-    // Set profile
-    routeState.selectedProfile = selectedProfile;
-    
-    // Update UI
+    const validProfiles = ['bike_customizable', 'car_customizable', 'foot'];
+    const profile = validProfiles.includes(profileParam) ? profileParam : 'bike_customizable';
+    routeState.selectedProfile = profile;
+    routeState.customModel = ensureCustomModel(null, profile);
+
+    // Update profile button UI to match restored profile
     document.querySelectorAll('.profile-btn').forEach(btn => {
-      btn.classList.remove('active');
-      if (btn.dataset.profile === routeState.selectedProfile) {
-        btn.classList.add('active');
-      }
+      btn.classList.toggle('selected', btn.dataset.profile === profile);
     });
-    
-    // Set default custom model if customizable profile is selected but no custom model is set
-    if (supportsCustomModel(routeState.selectedProfile)) {
-      routeState.customModel = ensureCustomModel(routeState.customModel, routeState.selectedProfile);
-    }
-    
-    // Load car access setting (for car_customizable profile only)
-    const allowCarAccessParam = params.get('allowCarAccess');
-    // Support legacy parameter name for backwards compatibility
-    const legacyParam = params.get('allowDestinationAccess');
-    const paramValue = allowCarAccessParam || legacyParam;
-    if (paramValue === '1' || paramValue === 'true') {
-      routeState.allowCarAccess = true;
-    } else {
-      // Default: false (block restricted roads)
-      routeState.allowCarAccess = false;
-    }
-    
-    // Update custom model with car access rule
-    if (routeState.selectedProfile === 'car_customizable' && routeState.customModel) {
-      routeState.customModel = updateCarAccessRule(
-        routeState.customModel,
-        routeState.allowCarAccess
-      );
-      // Update unpaved roads rule
-      routeState.customModel = updateUnpavedRoadsRule(
-        routeState.customModel,
-        routeState.avoidUnpavedRoads
-      );
-    }
-    
-    // Load unpaved roads setting (for car_customizable profile only)
-    const avoidUnpavedRoadsParam = params.get('avoidUnpavedRoads');
-    if (avoidUnpavedRoadsParam === '1' || avoidUnpavedRoadsParam === 'true') {
-      routeState.avoidUnpavedRoads = true;
-    } else {
-      // Default: false (slightly reduce unpaved roads)
-      routeState.avoidUnpavedRoads = false;
-    }
-    
-    // Update custom model with unpaved roads rule
-    if (routeState.selectedProfile === 'car_customizable' && routeState.customModel) {
-      routeState.customModel = updateUnpavedRoadsRule(
-        routeState.customModel,
-        routeState.avoidUnpavedRoads
-      );
-    }
-    
-    // Load avoid pushing setting (for bike_customizable profile only)
-    const avoidPushingParam = params.get('avoidPushing');
-    if (avoidPushingParam === '1' || avoidPushingParam === 'true') {
-      routeState.avoidPushing = true;
-    } else {
-      // Default: false (no additional penalty)
-      routeState.avoidPushing = false;
-    }
-    
-    // Update custom model with avoid pushing rule
-    if (routeState.selectedProfile === 'bike_customizable' && routeState.customModel) {
-      routeState.customModel = updateAvoidPushingRule(
-        routeState.customModel,
-        routeState.avoidPushing
-      );
-    }
-    
-    // Initialize slider and car access switch if customizable profile is selected
-    if (supportsCustomModel(routeState.selectedProfile)) {
-      // Wait a bit for UI to be ready
-      setTimeout(() => {
-        const sliderContainer = document.getElementById('customizable-slider-container');
-        if (sliderContainer) {
-          sliderContainer.style.display = 'block';
-          const slider = document.getElementById('mapillary-priority-slider');
-          const sliderValue = document.getElementById('slider-value');
-          const multiplyBy = getMapillaryPriority(routeState.customModel);
-          if (multiplyBy !== null && multiplyBy !== undefined && slider) {
-            // Use the exported function if available, otherwise set directly
-            if (window.setMapillarySliderValue) {
-              window.setMapillarySliderValue(multiplyBy);
-            } else {
-              // Find closest predefined value for slider position
-              const sliderValues = MAPILLARY_SLIDER_VALUES;
-              let closestIndex = 0;
-              let minDiff = Math.abs(multiplyBy - sliderValues[0]);
-              for (let i = 1; i < sliderValues.length; i++) {
-                const diff = Math.abs(multiplyBy - sliderValues[i]);
-                if (diff < minDiff) {
-                  minDiff = diff;
-                  closestIndex = i;
-                }
-              }
-              slider.value = closestIndex;
-              if (sliderValue) {
-                // Display the actual value (even if not in predefined list)
-                const inverseValue = (1 / multiplyBy).toFixed(0);
-                sliderValue.textContent = `${multiplyBy.toFixed(2)} (×${inverseValue})`;
-              }
-            }
-          }
-          
-          // Initialize car access switch for car_customizable
-          if (routeState.selectedProfile === 'car_customizable') {
-            const carAccessContainer = document.getElementById('car-access-container');
-            const carAccessSwitch = document.getElementById('allow-car-access');
-            if (carAccessContainer && carAccessSwitch) {
-              carAccessContainer.style.display = 'block';
-              carAccessSwitch.checked = routeState.allowCarAccess;
-            }
-            
-            // Initialize unpaved roads switch
-            const unpavedRoadsContainer = document.getElementById('unpaved-roads-container');
-            const unpavedRoadsSwitch = document.getElementById('avoid-unpaved-roads');
-            if (unpavedRoadsContainer && unpavedRoadsSwitch) {
-              unpavedRoadsContainer.style.display = 'block';
-              unpavedRoadsSwitch.checked = routeState.avoidUnpavedRoads;
-            }
-          }
-          
-          // Initialize avoid pushing switch for bike_customizable
-          if (routeState.selectedProfile === 'bike_customizable') {
-            const avoidPushingContainer = document.getElementById('avoid-pushing-container');
-            const avoidPushingSwitch = document.getElementById('avoid-pushing');
-            if (avoidPushingContainer && avoidPushingSwitch) {
-              avoidPushingContainer.style.display = 'block';
-              avoidPushingSwitch.checked = routeState.avoidPushing;
-            }
-          }
-        }
-      }, 100);
-    }
     
     // Load encoded value type
     const encodedParam = params.get('encoded');
@@ -527,72 +437,6 @@ export class Permalink {
       const encodedSelect = document.getElementById('heightgraph-encoded-select');
       if (encodedSelect) {
         encodedSelect.value = encodedParam;
-      }
-    }
-    
-    // Load context layers
-    // Store state for activation after map loads
-    const bikelanesParam = params.get('bikelanes');
-    const missingStreetsParam = params.get('missingStreets');
-    
-    if (bikelanesParam === '1' || missingStreetsParam === '1') {
-      // Function to activate context layers
-      const activateContextLayers = () => {
-        if (bikelanesParam === '1') {
-          const toggleBikelanes = document.getElementById('toggle-bikelanes');
-          if (toggleBikelanes) {
-            toggleBikelanes.checked = true;
-            // Trigger change event to show layers
-            toggleBikelanes.dispatchEvent(new Event('change'));
-          }
-        }
-        
-        if (missingStreetsParam === '1') {
-          const toggleMissingStreets = document.getElementById('toggle-missing-streets');
-          if (toggleMissingStreets) {
-            toggleMissingStreets.checked = true;
-            // Trigger change event to show layers
-            // Retry if layers don't exist yet (they might be created asynchronously)
-            let retryCount = 0;
-            const maxRetries = PERMALINK_CONFIG.MAX_LAYER_RETRIES;
-            const activateMissingStreets = () => {
-              const layers = [
-                'missing-streets-missing-roads',
-                'missing-streets-missing-bikelanes',
-                'missing-streets-regular-roads',
-                'missing-streets-regular-bikelanes',
-                'missing-streets-pano-roads',
-                'missing-streets-pano-bikelanes'
-              ];
-              const allLayersExist = layers.every(layerId => this.map.getLayer(layerId));
-              
-              if (allLayersExist) {
-                toggleMissingStreets.dispatchEvent(new Event('change'));
-              } else {
-                // Retry after a short delay
-                retryCount++;
-                if (retryCount < maxRetries) {
-                  setTimeout(activateMissingStreets, PERMALINK_CONFIG.LAYER_RETRY_DELAY);
-                } else {
-                  console.warn('Permalink: Could not activate missingStreets layers - layers not available');
-                }
-              }
-            };
-            activateMissingStreets();
-          }
-        }
-      };
-      
-      // Wait for map to load before activating layers
-      if (this.map.loaded()) {
-        // Map already loaded, wait a bit for layers to be created
-        setTimeout(activateContextLayers, 500);
-      } else {
-        // Map not loaded yet, wait for load event
-        this.map.once('load', () => {
-          // Additional delay to ensure layers are created
-          setTimeout(activateContextLayers, PERMALINK_CONFIG.LAYER_ACTIVATION_DELAY);
-        });
       }
     }
     
@@ -689,50 +533,9 @@ export class Permalink {
       paramParts.push(`profile=${encodeURIComponent(routeState.selectedProfile)}`);
     }
     
-    // Custom model (for customizable profiles)
-    // Only include mapillary_weight in URL if it differs from the default
-    if (supportsCustomModel(routeState.selectedProfile) && routeState.customModel) {
-      const currentWeight = getMapillaryPriority(routeState.customModel);
-      // Get the correct default model for the selected profile
-      const defaultModel = routeState.selectedProfile === 'bike_customizable' 
-        ? defaultBikeCustomModel 
-        : defaultCarCustomModel;
-      const defaultWeight = getMapillaryPriority(defaultModel);
-      
-      // Only add to URL if it differs from the default
-      if (currentWeight !== null && currentWeight !== undefined && currentWeight !== defaultWeight) {
-        paramParts.push(`mapillary_weight=${currentWeight.toString()}`);
-      }
-      
-      // Car access (only for car_customizable, only if enabled)
-      if (routeState.selectedProfile === 'car_customizable' && routeState.allowCarAccess) {
-        paramParts.push('allowCarAccess=1');
-      }
-      
-      // Unpaved roads (only for car_customizable, only if enabled)
-      if (routeState.selectedProfile === 'car_customizable' && routeState.avoidUnpavedRoads) {
-        paramParts.push('avoidUnpavedRoads=1');
-      }
-      
-      // Avoid pushing (only for bike_customizable, only if enabled)
-      if (routeState.selectedProfile === 'bike_customizable' && routeState.avoidPushing) {
-        paramParts.push('avoidPushing=1');
-      }
-    }
     
-    if (routeState.currentEncodedType && routeState.currentEncodedType !== 'mapillary_coverage') {
+    if (routeState.currentEncodedType) {
       paramParts.push(`encoded=${encodeURIComponent(routeState.currentEncodedType)}`);
-    }
-    
-    const toggleBikelanes = document.getElementById('toggle-bikelanes');
-    const toggleMissingStreets = document.getElementById('toggle-missing-streets');
-    
-    if (toggleBikelanes && toggleBikelanes.checked) {
-      paramParts.push('bikelanes=1');
-    }
-    
-    if (toggleMissingStreets && toggleMissingStreets.checked) {
-      paramParts.push('missingStreets=1');
     }
     
     return `${window.location.origin}${window.location.pathname}?${paramParts.join('&')}`;

@@ -3,7 +3,6 @@
 import { routeState } from '../routeState.js';
 import { HEIGHTGRAPH_CONFIG } from './heightgraphConfig.js';
 import { calculateCumulativeDistances } from './heightgraphUtils.js';
-import { getBicycleInfraDescription } from '../colorSchemes.js';
 import { t } from '../../i18n/i18n.js';
 
 // Store event handlers to prevent duplicate listeners
@@ -245,20 +244,11 @@ export function setupHeightgraphInteractivity(canvas, elevations, totalDistance,
       } else if (selectedType === 'surface' && encodedValues.surface && encodedValues.surface[dataIndex] !== undefined && 
                  encodedValues.surface[dataIndex] !== null) {
         tooltipContent += `${t('heightgraph.surface')}: ${String(encodedValues.surface[dataIndex])}`;
-      } else if (selectedType === 'road_class' && encodedValues.road_class && encodedValues.road_class[dataIndex] !== undefined && 
+      } else if (selectedType === 'road_class' && encodedValues.road_class && encodedValues.road_class[dataIndex] !== undefined &&
                  encodedValues.road_class[dataIndex] !== null) {
         tooltipContent += `${t('heightgraph.roadClass')}: ${String(encodedValues.road_class[dataIndex])}`;
-      } else if (selectedType === 'bicycle_infra' && encodedValues.bicycle_infra && encodedValues.bicycle_infra[dataIndex] !== undefined && 
-                 encodedValues.bicycle_infra[dataIndex] !== null) {
-        const bicycleInfraValue = encodedValues.bicycle_infra[dataIndex];
-        const description = getBicycleInfraDescription(bicycleInfraValue);
-        if (description) {
-          tooltipContent += `${t('heightgraph.bicycleInfra')}: ${description.replace(/<br>/g, ' ')}`;
-        } else {
-          tooltipContent += `${t('heightgraph.bicycleInfra')}: ${String(bicycleInfraValue).replace(/_/g, ' ')}`;
-        }
       }
-      
+
       // Show tooltip
       tooltip.innerHTML = tooltipContent;
       tooltip.style.visibility = 'hidden';

@@ -19,7 +19,6 @@
     "exportGpx": "Exporter en GPX",
     "clear": "Effacer",
     "mapillaryWeight": "Pondération Mapillary :",
-    "carAccess": "Ignorer les restrictions d'accès",
     "unpavedRoads": "Éviter les routes non revêtues",
     "avoidPushing": "Éviter de pousser le vélo",
     "collapsePanel": "Réduire",
@@ -86,7 +85,9 @@
     "terrain": "Relief",
     "hillshade": "Ombrage",
     "terrainTitle": "Données de relief Mapterhorn",
-    "hillshadeTitle": "Données d'ombrage Mapterhorn"
+    "hillshadeTitle": "Données d'ombrage Mapterhorn",
+    "panoramaxCoverage": "Couverture Panoramax",
+    "panoramaxCoverageTitle": "Afficher la couverture photo Panoramax"
   },
   "contextMenu": {
     "setStart": "Définir comme départ",
@@ -150,6 +151,17 @@
     "footwaybicycleyes_isolated": "Trottoir, vélos autorisés,<br>indépendant",
     "footwaybicycleyes_adjoiningorisolated": "Trottoir, vélos autorisés<br>(fallback)",
     "needsclarification": "Type indéterminé -<br>tags insuffisants"
+  },
+  "profiles": {
+    "bike": "Vélo",
+    "car": "Voiture",
+    "foot": "À pied"
+  },
+  "photoCoverage": {
+    "avoidCoverage": "Éviter les zones couvertes",
+    "avoid360Coverage": "Éviter les zones couvertes en 360°",
+    "weak": "Faible",
+    "strong": "Fort"
   },
   "github": {
     "reportIssue": "Signaler un problème ou donner un retour"
