@@ -158,8 +158,8 @@
     "foot": "Walk"
   },
   "photoCoverage": {
-    "avoidCoverage": "Avoid photo coverage",
-    "avoid360Coverage": "Avoid 360° photo coverage",
+    "avoidCoverage": "Avoid Panoramax coverage",
+    "avoid360Coverage": "Avoid Panoramax 360° coverage",
     "weak": "Weak",
     "strong": "Strong"
   },

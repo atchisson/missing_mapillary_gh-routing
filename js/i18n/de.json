@@ -158,8 +158,8 @@
     "foot": "Zu Fuß"
   },
   "photoCoverage": {
-    "avoidCoverage": "Abgedeckte Bereiche meiden",
-    "avoid360Coverage": "360°-abgedeckte Bereiche meiden",
+    "avoidCoverage": "Panoramax-Bereiche meiden",
+    "avoid360Coverage": "Panoramax 360°-Bereiche meiden",
     "weak": "Schwach",
     "strong": "Stark"
   },
