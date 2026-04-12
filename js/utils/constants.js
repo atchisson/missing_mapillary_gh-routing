@@ -4,7 +4,7 @@ import { t } from '../i18n/i18n.js';
 import { envConfig } from '../config/envConfig.js';
 
 // GraphHopper URL - loaded from .env or default fallback
-export const GRAPHHOPPER_URL = envConfig.GRAPHHOPPER_URL || 'https://ghroute.vizsim.de';
+export const GRAPHHOPPER_URL = envConfig.GRAPHHOPPER_URL || 'https://graphhopper.atchisson.fr';
 
 // Error messages — dynamic getters so they reflect the current language at call time
 export const ERROR_MESSAGES = {
