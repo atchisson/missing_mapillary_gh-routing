@@ -84,7 +84,7 @@ async function initMap() {
     center: [0, 47], // Neutral starting position (central Europe) — overridden by router bbox on load
     zoom: 5,         // Wide view so no specific city is highlighted before bbox loads
 
-    maxZoom: 20
+    maxZoom: 18
   });
   
   // Initialize dark map attribute (standard map is default)
