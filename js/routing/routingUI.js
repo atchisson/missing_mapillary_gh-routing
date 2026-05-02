@@ -93,8 +93,8 @@ function updateStrengthRowVisibility() {
 }
 
 // Show/hide Panoramax map layers to match checkbox state.
-// avoid-photo-coverage   → flat sequences (blue)
-// avoid-photo-coverage-360 → 360 sequences (orange)
+// avoid-photo-coverage   → flat + 360 sequences (avoids all coverage)
+// avoid-photo-coverage-360 → 360 sequences only
 function syncPanoramaxLayers() {
   const map = window.map;
   if (!map) return;
@@ -102,7 +102,7 @@ function syncPanoramaxLayers() {
     if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none');
   };
   setVis('panoramax-sequences-flat', routeState.avoidPhotoCoverage);
-  setVis('panoramax-sequences-360', routeState.avoidPhotoCoverageOnly360);
+  setVis('panoramax-sequences-360', routeState.avoidPhotoCoverage || routeState.avoidPhotoCoverageOnly360);
 }
 export function setupUIHandlers(map) {
   const startBtn = document.getElementById('set-start');
