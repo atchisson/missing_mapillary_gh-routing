@@ -313,11 +313,33 @@ function getProfileParam() {
   return getGraphHopperProfile(routeState.selectedProfile);
 }
 
+function haversineDistance(c1, c2) {
+  const R = 6371000;
+  const lat1 = c1[1] * Math.PI / 180, lat2 = c2[1] * Math.PI / 180;
+  const dLat = (c2[1] - c1[1]) * Math.PI / 180;
+  const dLon = (c2[0] - c1[0]) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function computeUncoveredDistance(coordinates, photoCoverageDetails) {
+  if (!photoCoverageDetails || !coordinates || coordinates.length < 2) return null;
+  let uncovered = 0;
+  for (const [startIdx, endIdx, covered] of photoCoverageDetails) {
+    if (!covered) {
+      for (let i = startIdx; i < endIdx && i + 1 < coordinates.length; i++) {
+        uncovered += haversineDistance(coordinates[i], coordinates[i + 1]);
+      }
+    }
+  }
+  return uncovered;
+}
+
 // Build GET request URL for route calculation (standard profiles: car, bike, foot)
 // Only requests road_class details to avoid HTTP 400 from unavailable properties
 function buildGetRequestUrl(points, profileParam) {
   const pointParams = points.map(p => `point=${p[1]},${p[0]}`).join('&');
-  return `${GRAPHHOPPER_URL}/route?${pointParams}&profile=${profileParam}&points_encoded=false&elevation=true&ch.disable=true&details=road_class&type=json`;
+  return `${GRAPHHOPPER_URL}/route?${pointParams}&profile=${profileParam}&points_encoded=false&elevation=true&ch.disable=true&details=road_class,photo_coverage&type=json`;
 }
 
 // Fetch route with GET request (with fallback without details if needed)
@@ -898,12 +920,16 @@ export async function calculateRoute(map, start, end, waypoints = []) {
       
       // Update route info
       if (routeInfo) {
-        routeInfo.innerHTML = generateRouteInfoHTML(path);
-        
+        const uncoveredDistance = path.uncovered_distance != null
+          ? path.uncovered_distance
+          : computeUncoveredDistance(coordinates, path.details?.photo_coverage);
+        routeInfo.innerHTML = generateRouteInfoHTML(path, uncoveredDistance);
+
         // Store route data for redrawing heightgraph and route visualization
         routeState.currentRouteData = {
           elevations: hasElevation ? elevations : [],
           distance: path.distance,
+          uncoveredDistance,
           encodedValues: encodedValues,
           coordinates: coordinates
         };

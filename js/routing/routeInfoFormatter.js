@@ -28,7 +28,7 @@ export function formatTime(timeSeconds) {
  * @param {Object} path - GraphHopper path object
  * @returns {string} HTML string
  */
-export function generateRouteInfoHTML(path) {
+export function generateRouteInfoHTML(path, uncoveredDistance = null) {
   if (!path) {
     return `<div class="route-info-compact">${t('errors.noRouteData')}</div>`;
   }
@@ -36,16 +36,23 @@ export function generateRouteInfoHTML(path) {
   const distance = (path.distance / 1000).toFixed(2);
   const timeSeconds = Math.round(path.time / 1000);
   const timeDisplay = formatTime(timeSeconds);
-  
-  const avgSpeed = timeSeconds > 0 
-    ? (path.distance / 1000 / (path.time / 1000 / 3600)).toFixed(1)
-    : '0.0';
-  
   const ascend = path.ascend ? Math.round(path.ascend) : null;
   const descend = path.descend ? Math.round(path.descend) : null;
-  const instructionCount = path.instructions ? path.instructions.length : null;
-  const weight = path.weight ? formatNumberWithThousandSeparator(Math.round(path.weight)) : null;
-  
+
+  let uncoveredHTML = '';
+  if (uncoveredDistance !== null) {
+    const uncoveredKm = (uncoveredDistance / 1000).toFixed(2);
+    const percent = path.distance > 0 ? Math.round(uncoveredDistance / path.distance * 100) : 0;
+    uncoveredHTML = `
+      <div class="route-info-row" title="${t('routeInfo.uncoveredTitle')}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>
+        <span class="route-info-compact-value">+${uncoveredKm} km / ${percent}%</span>
+      </div>`;
+  }
+
   return `
     <div class="route-info-compact">
       <div class="route-info-row">
@@ -61,13 +68,7 @@ export function generateRouteInfoHTML(path) {
         </svg>
         <span class="route-info-compact-value">${timeDisplay}</span>
       </div>
-      <div class="route-info-row">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12,2A10,10,0,1,0,22,12,10.011,10.011,0,0,0,12,2Zm7.411,13H12.659L9.919,8.606a1,1,0,1,0-1.838.788L10.484,15H4.589a8,8,0,1,1,14.822,0Z"/>
-        </svg>
-        <span class="route-info-compact-label">Ø:</span>
-        <span class="route-info-compact-value">${avgSpeed} km/h</span>
-      </div>
+      ${uncoveredHTML}
       ${(ascend !== null || descend !== null) ? `
       <div class="route-info-row">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

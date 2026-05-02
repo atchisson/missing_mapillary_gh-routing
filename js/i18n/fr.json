@@ -174,7 +174,9 @@
   },
   "routeInfo": {
     "turns": "virages",
-    "weight": "Poids"
+    "weight": "Poids",
+    "uncovered": "non couverts Panoramax",
+    "uncoveredTitle": "Distance non couverte par Panoramax sur ce trajet"
   },
   "lang": {
     "switcher": "Langue"

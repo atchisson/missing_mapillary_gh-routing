@@ -174,7 +174,9 @@
   },
   "routeInfo": {
     "turns": "Abzweige",
-    "weight": "Gewicht"
+    "weight": "Gewicht",
+    "uncovered": "Panoramax nicht abgedeckt",
+    "uncoveredTitle": "Nicht von Panoramax abgedeckte Strecke auf dieser Route"
   },
   "lang": {
     "switcher": "Sprache"

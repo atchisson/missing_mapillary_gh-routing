@@ -174,7 +174,9 @@
   },
   "routeInfo": {
     "turns": "turns",
-    "weight": "Weight"
+    "weight": "Weight",
+    "uncovered": "Panoramax uncovered",
+    "uncoveredTitle": "Distance not covered by Panoramax on this route"
   },
   "lang": {
     "switcher": "Language"
