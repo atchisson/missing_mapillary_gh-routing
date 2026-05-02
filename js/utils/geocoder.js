@@ -1,5 +1,5 @@
 // geocoder.js
-import { t } from '../i18n/i18n.js';
+import { t, getLang } from '../i18n/i18n.js';
 
 export function setupPhotonGeocoder(map) {
   const container = document.createElement("div");
@@ -37,16 +37,10 @@ export function setupPhotonGeocoder(map) {
   let currentResults = [];
 
   async function fetchSuggestions(query) {
-    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lang=de&limit=10&bbox=5,47,15,55`;
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lang=${getLang()}&limit=5`;
     const res = await fetch(url);
     const json = await res.json();
-    // Filter to only show results from Germany
-    const features = (json.features || []).filter(f => {
-      const country = f.properties.country;
-      return country === 'Deutschland' || country === 'Germany' || country === 'DE';
-    });
-    // Limit to 5 results after filtering
-    return features.slice(0, 5);
+    return json.features || [];
   }
 
   function formatGeocoderResult(feature) {
@@ -299,16 +293,10 @@ export function setupRoutingInputGeocoder(inputElement, map, onSelect) {
   }
 
   async function fetchSuggestions(query) {
-    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lang=de&limit=10&bbox=5,47,15,55`;
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lang=${getLang()}&limit=5`;
     const res = await fetch(url);
     const json = await res.json();
-    // Filter to only show results from Germany
-    const features = (json.features || []).filter(f => {
-      const country = f.properties.country;
-      return country === 'Deutschland' || country === 'Germany' || country === 'DE';
-    });
-    // Limit to 5 results after filtering
-    return features.slice(0, 5);
+    return json.features || [];
   }
 
   function showResults(features) {
@@ -457,7 +445,7 @@ export function setupRoutingInputGeocoder(inputElement, map, onSelect) {
 export async function reverseGeocode(lng, lat) {
   try {
     // Use Photon reverse geocoding API
-    const url = `https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}&lang=de`;
+    const url = `https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}&lang=${getLang()}`;
     const response = await fetch(url);
     const data = await response.json();
     
