@@ -1040,7 +1040,8 @@ export function clearRoute(map) {
   
   routeState.reset();
   if (map && map.getCanvas()) {
-    map.getCanvas().style.cursor = '';
+    const selecting = routeState.isSelectingStart || routeState.isSelectingEnd || routeState.isSelectingWaypoint;
+    if (!selecting) map.getCanvas().style.cursor = '';
   }
   
   const routeSource = map.getSource(LAYER_IDS.ROUTE);

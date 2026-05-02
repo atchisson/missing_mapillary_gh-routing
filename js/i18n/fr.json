@@ -7,6 +7,7 @@
     "setStart": "Définir le point de départ sur la carte",
     "setEnd": "Définir le point d'arrivée sur la carte",
     "addWaypoint": "Ajouter un point de passage",
+    "addWaypointActive": "Cliquez sur la carte pour ajouter un point de passage",
     "collapse": "Réduire/Développer",
     "placeholder": "Adresse ou coordonnées",
     "waypoints": "Points de passage",

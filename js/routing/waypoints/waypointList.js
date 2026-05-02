@@ -17,8 +17,6 @@ import { t } from '../../i18n/i18n.js';
  * @returns {string} HTML string
  */
 function createWaypointItemHTML(index, waypoint) {
-  const svgPath = `svgs/${waypoint.svgId}`;
-  const waypointAlt = t('waypointMenu.alt').replace('{index}', String(index + 1));
   return `
     <span class="waypoint-drag-handle" title="${t('waypointMenu.dragHandle')}">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -29,9 +27,6 @@ function createWaypointItemHTML(index, waypoint) {
         <circle cx="15" cy="5" r="1"></circle>
         <circle cx="15" cy="19" r="1"></circle>
       </svg>
-    </span>
-    <span class="waypoint-svg-icon">
-      <img src="${svgPath}" alt="${waypointAlt}" style="width: 20px; height: 20px; object-fit: contain;">
     </span>
     <span class="waypoint-number">${index + 1}</span>
     <span class="waypoint-coords">${waypoint.lat.toFixed(3)}, ${waypoint.lng.toFixed(3)}</span>

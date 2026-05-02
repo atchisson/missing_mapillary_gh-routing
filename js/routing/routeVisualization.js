@@ -11,15 +11,7 @@ export function setupRouteHover(map) {
     closeOnClick: false
   });
   
-  map.on('mouseenter', 'route-layer', (e) => {
-    // Only change cursor if route is not hidden
-    if (!window.routeIsHidden) {
-      map.getCanvas().style.cursor = 'pointer';
-    }
-  });
-  
   map.on('mouseleave', 'route-layer', () => {
-    map.getCanvas().style.cursor = '';
     popup.remove();
     // Clear hovered segment
     if (map.getSource('route-hover-segment')) {
@@ -83,16 +75,8 @@ export function setupRouteHover(map) {
   });
   
   map.on('mousemove', 'route-layer', (e) => {
-    // Don't show popup or hover effects if route is hidden
     if (window.routeIsHidden) {
       popup.remove();
-      // Clear hovered segment
-      if (map.getSource('route-hover-segment')) {
-        map.getSource('route-hover-segment').setData({
-          type: 'FeatureCollection',
-          features: []
-        });
-      }
       return;
     }
     
@@ -182,45 +166,6 @@ export function setupRouteHover(map) {
                  encodedValues.road_class[dataIndex] !== null) {
         selectedValue = encodedValues.road_class[dataIndex];
         valueLabel = t('heightgraph.roadClass');
-      }
-      
-      // Highlight the hovered segment by making it thicker (always show, even if no value)
-      if (segmentStartIndex < originalCoordinates.length - 1) {
-        const segmentCoords = [
-          originalCoordinates[segmentStartIndex],
-          originalCoordinates[segmentStartIndex + 1]
-        ];
-        
-        // Get color for the segment based on selected encoded value
-        let segmentColor = '#3b82f6'; // Default blue
-        if (selectedValue !== null) {
-          const allValues = encodedValues[selectedType] || [];
-          segmentColor = getColorForEncodedValue(selectedType, selectedValue, allValues);
-        }
-        
-        if (map.getSource('route-hover-segment')) {
-          map.getSource('route-hover-segment').setData({
-            type: 'Feature',
-            geometry: {
-              type: 'LineString',
-              coordinates: segmentCoords
-            },
-            properties: {
-              color: segmentColor
-            }
-          });
-          
-          // Update layer to use property-based coloring
-          map.setPaintProperty('route-hover-segment-layer', 'line-color', ['get', 'color']);
-        }
-      } else {
-        // Clear hovered segment if no valid segment
-        if (map.getSource('route-hover-segment')) {
-          map.getSource('route-hover-segment').setData({
-            type: 'FeatureCollection',
-            features: []
-          });
-        }
       }
       
       // Show popup only if we have a value for the selected type

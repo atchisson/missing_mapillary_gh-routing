@@ -1549,6 +1549,15 @@ select.lang-switcher {
   border-color: var(--border-secondary);
 }
 
+.btn-add-waypoint.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.btn-add-waypoint.active svg {
+  stroke: white;
+}
+
 .btn-add-waypoint svg {
   stroke: #f59e0b;
 }

@@ -156,27 +156,12 @@ export function createEndMarker(map, lngLat) {
 export function createWaypointMarker(map, waypoint, index) {
   const el = createBaseMarkerElement('waypoint-marker');
   
-  // Validate waypoint has svgId
-  if (!waypoint || !waypoint.svgId) {
-    console.warn('Waypoint missing svgId, using default');
-  }
-  
-  // Load and display the waypoint's unique SVG
-  const svgPath = `svgs/${waypoint?.svgId || 'raspberry-svgrepo-com.svg'}`;
   const waypointNumber = index + 1;
-  
-  // Create pin design similar to start/end markers
-  // Orange pin with SVG icon in top (round) area and number in bottom (pointed) area
+
   el.innerHTML = `
     <svg width="32" height="32" viewBox="0 0 24 24" fill="#f59e0b" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-      <!-- Pin shape (round top, pointed bottom) -->
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-      <!-- SVG icon in upper round area (smaller) -->
-      <image href="${svgPath}" x="6" y="4" width="12" height="12" style="filter: brightness(0) invert(1) drop-shadow(0 1px 1px rgba(0,0,0,0.3));" preserveAspectRatio="xMidYMid meet"/>
-      <!-- Orange circular overlay behind number to hide symbol -->
-      <circle cx="12" cy="15" r="4" fill="#f59e0b" stroke="none"/>
-      <!-- Number in lower pointed area (smaller, slightly bold) -->
-      <text x="12" y="18" text-anchor="middle" fill="white" stroke="none" font-size="7.5" font-weight="bold" font-family="Arial, sans-serif">${waypointNumber}</text>
+      <text x="12" y="13" text-anchor="middle" fill="white" stroke="none" font-size="9" font-weight="bold" font-family="Arial, sans-serif">${waypointNumber}</text>
     </svg>
   `;
   

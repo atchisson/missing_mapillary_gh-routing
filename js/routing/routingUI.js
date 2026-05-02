@@ -332,13 +332,12 @@ export function setupUIHandlers(map) {
     routeState.isSelectingStart = false;
     routeState.isSelectingEnd = false;
     map.getCanvas().style.cursor = 'crosshair';
-    
-    // Update button states (both original and header buttons)
-    document.querySelectorAll('.btn-set-start, .btn-set-start-header').forEach(btn => {
-      btn.classList.remove('active');
-    });
-    document.querySelectorAll('.btn-set-end, .btn-set-end-header').forEach(btn => {
-      btn.classList.remove('active');
+
+    document.querySelectorAll('.btn-set-start, .btn-set-start-header').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.btn-set-end, .btn-set-end-header').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.btn-add-waypoint, .btn-add-waypoint-header').forEach(btn => {
+      btn.classList.add('active');
+      btn.title = t('routing.addWaypointActive');
     });
   };
 
@@ -391,6 +390,10 @@ export function setupUIHandlers(map) {
       await addWaypoint(map, e.lngLat);
       routeState.isSelectingWaypoint = false;
       map.getCanvas().style.cursor = '';
+      document.querySelectorAll('.btn-add-waypoint, .btn-add-waypoint-header').forEach(btn => {
+        btn.classList.remove('active');
+        btn.title = t('routing.addWaypoint');
+      });
     }
   });
 
