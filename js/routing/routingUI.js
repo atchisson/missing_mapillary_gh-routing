@@ -164,6 +164,39 @@ export function updateStrengthRowVisibility() {
   if (pill360) pill360.classList.toggle('active', !!routeState.avoidPhotoCoverageOnly360);
 }
 
+// Sync the "Options de trajet" accordion with routeState.
+// Called on every toggle and after a profile switch, since the paved-only state
+// is per profile and can differ from the profile left behind.
+export function updateTrajectoryOptionsUI() {
+  const pavedOnly = routeState.avoidUnpavedRoads;
+  const dedupe = routeState.avoidTraversedEdges;
+  const noToll = routeState.tollSupported && routeState.avoidToll;
+
+  const pillPaved = document.getElementById('ppill-offroad');
+  if (pillPaved) pillPaved.classList.toggle('active', pavedOnly);
+  const pillDedupe = document.getElementById('ppill-traversed');
+  if (pillDedupe) pillDedupe.classList.toggle('active', dedupe);
+
+  // Hidden until /info confirms the router graph carries the 'toll' encoded value
+  const pillToll = document.getElementById('ppill-toll');
+  if (pillToll) {
+    pillToll.style.display = routeState.tollSupported ? '' : 'none';
+    pillToll.classList.toggle('active', noToll);
+  }
+
+  // The strength slider only means something once the option is on
+  const options = document.getElementById('trajectory-options');
+  if (options) options.classList.toggle('show', dedupe);
+
+  // A plain ON badge would stay lit permanently, since paved-only is on by
+  // default for the car profile. The count is what actually informs.
+  const count = (pavedOnly ? 1 : 0) + (dedupe ? 1 : 0) + (noToll ? 1 : 0);
+  const badge = document.getElementById('trajectory-badge');
+  if (badge) badge.textContent = String(count);
+  const accordion = document.getElementById('trajectory-accordion');
+  if (accordion) accordion.classList.toggle('active', count > 0);
+}
+
 // Show/hide Panoramax map layers to match checkbox state.
 // avoid-photo-coverage   → flat + 360 sequences (avoids all coverage)
 // avoid-photo-coverage-360 → 360 sequences only
@@ -415,18 +448,74 @@ export function setupUIHandlers(map) {
     });
   }
 
+  // ── Trajectory options accordion ──────────────────────────────────────────
+
+  const trajectoryHeader = document.getElementById('trajectory-accordion-header');
+  if (trajectoryHeader) {
+    trajectoryHeader.addEventListener('click', () => {
+      document.getElementById('trajectory-accordion').classList.toggle('open');
+    });
+  }
+
   // Off-road toggle pill
   const ppillOffroad = document.getElementById('ppill-offroad');
   if (ppillOffroad) {
     ppillOffroad.addEventListener('click', () => {
       routeState.avoidUnpavedRoads = !routeState.avoidUnpavedRoads;
       trackEvent('Route', routeState.avoidUnpavedRoads ? 'AvoidOffroad' : 'AllowOffroad');
-      ppillOffroad.classList.toggle('active', routeState.avoidUnpavedRoads);
       if (!routeState.customModel) routeState.customModel = ensureCustomModel(null, routeState.selectedProfile);
       applyUnpavedRoadsSettings();
+      updateTrajectoryOptionsUI();
       recalculateRouteIfReady();
     });
   }
+
+  // Avoid roads already travelled (custom fork: avoid_traversed_edges)
+  const ppillTraversed = document.getElementById('ppill-traversed');
+  if (ppillTraversed) {
+    ppillTraversed.addEventListener('click', () => {
+      routeState.avoidTraversedEdges = !routeState.avoidTraversedEdges;
+      trackEvent('Route', routeState.avoidTraversedEdges ? 'AvoidTraversed' : 'AllowTraversed');
+      updateTrajectoryOptionsUI();
+      recalculateRouteIfReady();
+    });
+  }
+
+  // Toll avoidance. The pill is only reachable when the graph supports it, but
+  // guard anyway so a stale DOM state cannot produce an uncompilable model.
+  const ppillToll = document.getElementById('ppill-toll');
+  if (ppillToll) {
+    ppillToll.addEventListener('click', () => {
+      if (!routeState.tollSupported) return;
+      routeState.avoidToll = !routeState.avoidToll;
+      trackEvent('Route', routeState.avoidToll ? 'AvoidToll' : 'AllowToll');
+      if (!routeState.customModel) routeState.customModel = ensureCustomModel(null, routeState.selectedProfile);
+      updateTrajectoryOptionsUI();
+      recalculateRouteIfReady();
+    });
+  }
+
+  // Avoidance strength. Unlike the Panoramax slider this changes no custom-model
+  // rule — it only feeds traversed_edge_factor on the request — so it just needs
+  // debouncing before the router is asked again.
+  const traversedSlider = document.getElementById('traversed-strength');
+  if (traversedSlider) {
+    traversedSlider.value = routeState.traversedEdgeStrength ?? 50;
+    updateOptSliderBg(traversedSlider);
+    let traversedDebounceTimer = null;
+    traversedSlider.addEventListener('input', (e) => {
+      routeState.traversedEdgeStrength = parseFloat(e.target.value);
+      updateOptSliderBg(e.target); // immediate visual feedback
+      if (routeState.avoidTraversedEdges) {
+        clearTimeout(traversedDebounceTimer);
+        traversedDebounceTimer = setTimeout(() => {
+          recalculateRouteIfReady();
+        }, 350);
+      }
+    });
+  }
+
+  updateTrajectoryOptionsUI();
 
   // Profile selector buttons (bike_customizable / car_customizable / foot)
   document.querySelectorAll('.profile-btn').forEach(btn => {
@@ -441,6 +530,9 @@ export function setupUIHandlers(map) {
       // Update active state
       document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
+
+      // Paved-only is stored per profile, so the pill has to follow the switch
+      updateTrajectoryOptionsUI();
 
       recalculateRouteIfReady();
     });
